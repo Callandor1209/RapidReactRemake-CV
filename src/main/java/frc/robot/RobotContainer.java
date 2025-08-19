@@ -15,6 +15,7 @@ import frc.robot.commands.MoveObjectBackwardsInConveyer;
 import frc.robot.commands.SpinTurretClockwise;
 import frc.robot.commands.SpinTurretCounterClockwise;
 import frc.robot.commands.SpinTurretShootMotorCommand;
+import frc.robot.commands.turretAuto;
 import frc.robot.commands.RotateTurretTowardsCenter;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.util.MechanismSim;
@@ -24,13 +25,18 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.util.DriveFeedforwards;
 
 /**
@@ -51,11 +57,17 @@ public class RobotContainer {
       new CommandPS5Controller(OperatorConstants.kDriverControllerPort);
 
     public final static CommandXboxController M_XBOX_CONTROLLER = new CommandXboxController(OperatorConstants.kDriverControllerPort );
+        private final SendableChooser<Command> m_chooser = new SendableChooser<>();
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+
+    NamedCommands.registerCommand("intake", new MoveIntakeConveyerMotorCommand() );
+    NamedCommands.registerCommand("shootTurret", new turretAuto());
+      m_chooser.setDefaultOption("New Auto", new PathPlannerAuto("auto1"));
+  SmartDashboard.putData("Auto choices", m_chooser);
   }
 
   /**
@@ -68,7 +80,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-/* 
+
     //Turret triggers
     new Trigger(() -> m_driverController.getL2Axis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
     new Trigger(() -> m_driverController.getR2Axis() > 0.1).whileTrue(new SpinTurretClockwise());
@@ -89,11 +101,12 @@ public class RobotContainer {
     m_driverController.R1().whileTrue(new MoveIntakeConveyerMotorCommand());
     m_driverController.square().whileTrue(new SpinTurretShootMotorCommand());
     m_driverController.circle().whileTrue(new MoveObjectBackwardsInConveyer());
-    */
+  
 
 
  
     //xbox controller triggers
+    /* 
     new Trigger(() -> M_XBOX_CONTROLLER.getLeftTriggerAxis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
     new Trigger(() -> M_XBOX_CONTROLLER.getRightTriggerAxis() > 0.1).whileTrue(new SpinTurretClockwise());
     M_XBOX_CONTROLLER.y().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_UP));
@@ -116,15 +129,15 @@ public class RobotContainer {
     M_XBOX_CONTROLLER.povLeft().onTrue(new DriveTwoInchesInDirection('L'));
     M_XBOX_CONTROLLER.povRight().onTrue(new DriveTwoInchesInDirection('R'));
 
-    
+    */
   }
+    
   /**
    * Use this to pass the autonomous command to the main {@link Robot} class.
    *
    * @return the command to run in autonomous
    */
-  //public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    //return Autos.exampleAuto(m_exampleSubsystem);
-  //}
+  public Command getAutonomousCommand() {
+    return m_chooser.getSelected();
+  }
 }

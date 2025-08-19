@@ -13,10 +13,13 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DrivetrainDefaultCommand;
@@ -48,6 +51,11 @@ public class Robot extends LoggedRobot {
       public static final SwerveRequest.FieldCentric SWERVE_REQUEST_DRIVE = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
 
+      
+  
+      
+
+
 
 
   /**
@@ -74,6 +82,9 @@ MechanismSim.updateIntakeRotationTotal(0);
 MechanismSim.updateTurretRotationTotal(0);
 Pose3d ballPose = new Pose3d(0, 0, 0, new Rotation3d());
 Logger.recordOutput("component/pose3d", ballPose);
+
+
+
 
 
     m_robotContainer = new RobotContainer();
@@ -118,7 +129,7 @@ Logger.recordOutput("component/pose3d", ballPose);
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();

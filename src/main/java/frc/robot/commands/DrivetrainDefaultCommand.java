@@ -19,7 +19,10 @@ public class DrivetrainDefaultCommand extends Command {
   public DrivetrainDefaultCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Robot.DRIVETRAIN_SUBSYSTEM);
+    
   }
+
+  
 
   // Called when the command is initially scheduled.
   @Override
@@ -33,7 +36,10 @@ public class DrivetrainDefaultCommand extends Command {
     double controllerDirection = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? 1 : -1;
     double x = RobotContainer.m_driverController.getRawAxis(1) * controllerDirection;
     double y = RobotContainer.m_driverController.getRawAxis(0) * controllerDirection;
-    double r = findR(RobotContainer.m_driverController.getRawAxis(5) , RobotContainer.m_driverController.getRawAxis(4));
+    //playstation controller
+    double r = findR(RobotContainer.m_driverController.getRawAxis(5) , RobotContainer.m_driverController.getRawAxis(2));
+    //xbox controller
+    //double r = findR(RobotContainer.m_driverController.getRawAxis(5) , RobotContainer.m_driverController.getRawAxis(4));
     x = squareAndKeepSign(x);
     y = squareAndKeepSign(y);
     r = squareAndKeepSign(r);

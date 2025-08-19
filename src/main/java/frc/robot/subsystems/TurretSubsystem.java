@@ -35,6 +35,8 @@ public class TurretSubsystem extends SubsystemBase {
   private double JKgMetersSquared = .001; // need to find what this actually is
   private boolean defaultCommand = false;
 
+  
+
   /** Creates a new TurretSubsystem. */
   public TurretSubsystem() {
         if (Robot.isSimulation()) {
@@ -44,7 +46,7 @@ public class TurretSubsystem extends SubsystemBase {
       DCMotor.getKrakenX60(1));
     }
     turretMotor.getConfigurator().apply(_talonFXConfiguration);
-
+Logger.recordOutput("Shoot motor", getTurretShootMotorSpeed());
   }
 
     

@@ -88,6 +88,7 @@ public class ConveyerSubsystem extends SubsystemBase {
 
     talonFXSim2.setRawRotorPosition(rotorPosition);
     talonFXSim2.setRotorVelocity(rotorVelocity);
+    Logger.recordOutput("Conveyer power", getConveyerSpeed());
 
   }
 
@@ -97,8 +98,6 @@ public class ConveyerSubsystem extends SubsystemBase {
       updateSimulation(m_conveyerMotorM1, m_conveyerMotorM1Sim);
       updateSimulation(m_conveyerMotorM2, m_conveyerMotorM2Sim);
     }
-    
-    //System.out.println(getConveyerSpeed());
   }
 
   public void moveConveyer(){
@@ -120,7 +119,7 @@ public class ConveyerSubsystem extends SubsystemBase {
   }
 
   public boolean ballInturret(){
-    if(_turretSensor.getDistance().getValueAsDouble() < 0.5 || _turretSensorChooser.get()){
+    if(_turretSensor.getDistance().getValueAsDouble() > 0.5 || _turretSensorChooser.get()){
       return true;
     }
     return false;
