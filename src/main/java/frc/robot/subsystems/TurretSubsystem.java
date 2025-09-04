@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 
+import java.util.zip.Deflater;
+
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
@@ -21,8 +23,10 @@ import frc.robot.Constants.TurretConstants;
 import frc.robot.commands.RotateTurretTowardsCenter;
 import frc.robot.util.MechanismSim;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.units.measure.Distance;
 
 public class TurretSubsystem extends SubsystemBase {
 
@@ -31,9 +35,13 @@ public class TurretSubsystem extends SubsystemBase {
   public final TalonFX turretMotor = new TalonFX(Constants.TURRET_MOTOR_DEVICE_ID);
   public final TalonFX turretShootMotor = new TalonFX(Constants.TURRET_SHOOT_MOTOR_DEVICE_ID);
   private DCMotorSim m_turretMotorM1; 
+  DCMotorSim m_turretShootMotorM2;
   private double kGearRatio = 10;
   private double JKgMetersSquared = .001; // need to find what this actually is
-  private boolean defaultCommand = false;
+  public boolean defaultCommand = false;
+  public static InterpolatingDoubleTreeMap treeMap = new InterpolatingDoubleTreeMap();
+
+
 
   
 
@@ -44,9 +52,19 @@ public class TurretSubsystem extends SubsystemBase {
       LinearSystemId.createDCMotorSystem(
           DCMotor.getKrakenX60(1), JKgMetersSquared, kGearRatio),
       DCMotor.getKrakenX60(1));
+      m_turretShootMotorM2 = new DCMotorSim(
+        LinearSystemId.createDCMotorSystem(
+            DCMotor.getKrakenX60(1), JKgMetersSquared, kGearRatio),
+        DCMotor.getKrakenX60(1));
+      
     }
     turretMotor.getConfigurator().apply(_talonFXConfiguration);
-Logger.recordOutput("Shoot motor", getTurretShootMotorSpeed());
+    treeMap.put(4.0, 0.4);
+    treeMap.put(5.0, 0.5);
+    treeMap.put(10.0,0.6);
+    treeMap.put(1.0, 0.1);
+    treeMap.put(0.0, 0.0);
+
   }
 
     
@@ -56,6 +74,7 @@ Logger.recordOutput("Shoot motor", getTurretShootMotorSpeed());
     // This method will be called once per scheduler run\s);
         if (Robot.isSimulation()) {
      updateSimulation(turretMotor, m_turretMotorM1);
+     Logger.recordOutput("Shoot motor", getTurretShootMotorSpeed());
     }
   }
 
@@ -97,6 +116,7 @@ Logger.recordOutput("Shoot motor", getTurretShootMotorSpeed());
 
     double mechanismPositionRadians = simMotor.getAngularPositionRotations() * 2 * Math.PI;
     MechanismSim.updateTurretRotationTotal(mechanismPositionRadians);
+
   }
 
   public void spinTurretClockwise() {
@@ -113,7 +133,12 @@ Logger.recordOutput("Shoot motor", getTurretShootMotorSpeed());
   }
 
   public void shootTurret(){
-    turretShootMotor.set(0.3);
+    if(defaultCommand){
+    double distance = Math.sqrt((8.25 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX())* (8.25 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX()) + (4.15 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()) *  (4.15 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()));
+    distance = distance + 2.28;
+    turretShootMotor.set(treeMap.get(distance));
+    }
+    
   }
   public void stopTurretShoot(){
     turretShootMotor.set(0);

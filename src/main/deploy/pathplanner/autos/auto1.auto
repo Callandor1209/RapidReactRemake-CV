@@ -34,6 +34,12 @@
           "data": {
             "pathName": "path2"
           }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "shootTurret"
+          }
         }
       ]
     }

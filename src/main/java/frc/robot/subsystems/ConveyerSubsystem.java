@@ -37,6 +37,9 @@ public class ConveyerSubsystem extends SubsystemBase {
   public final TalonFX m_conveyerMotorM2 = new TalonFX(Constants.CONVEYER_MOTOR_2_DEVICE_ID);
   private DCMotorSim m_conveyerMotorM1Sim;
   private DCMotorSim m_conveyerMotorM2Sim;
+  public static boolean lowerSensor;
+  public static boolean upperSensor;
+  public static boolean turretSensor;
 
   // have some constants
   private double JKgMetersSquared = 10;
@@ -56,8 +59,8 @@ public class ConveyerSubsystem extends SubsystemBase {
               DCMotor.getKrakenX60(1), JKgMetersSquared, kGearRatio),
           DCMotor.getKrakenX60(1));
 
-      _lowerSensorChooser.addOption("No Ball", false);
-      _lowerSensorChooser.addDefaultOption("Has Ball", true);
+      _lowerSensorChooser.addOption("Has Ball", true);
+      _lowerSensorChooser.addDefaultOption("No Ball", false);
       _turretSensorChooser.addDefaultOption("No Ball", false);
       _turretSensorChooser.addOption("Has Ball", true);
       _upperSensorChooser.addDefaultOption("No Ball", false);
@@ -119,20 +122,20 @@ public class ConveyerSubsystem extends SubsystemBase {
   }
 
   public boolean ballInturret(){
-    if(_turretSensor.getDistance().getValueAsDouble() > 0.5 || _turretSensorChooser.get()){
+    if(_turretSensor.getDistance().getValueAsDouble() > 0.5 || _turretSensorChooser.get() || turretSensor){
       return true;
     }
     return false;
   }
   public boolean ballInLowerSensor(){
-    if (_lowerSensor.getDistance().getValueAsDouble() > 0.5 || _lowerSensorChooser.get()){
+    if (_lowerSensor.getDistance().getValueAsDouble() > 0.5 || _lowerSensorChooser.get()|| lowerSensor){
       return true;
     }
     return false;
   }
 
   public boolean ballinUpperSensor(){
-    if (_upperSensor.getDistance().getValueAsDouble() > 0.5 || _upperSensorChooser.get()){
+    if (_upperSensor.getDistance().getValueAsDouble() > 0.5 || _upperSensorChooser.get() || upperSensor){
       return true;
     }
     return false;

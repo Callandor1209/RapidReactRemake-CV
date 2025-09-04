@@ -40,6 +40,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Robot;
+import frc.robot.util.AngularPositionHolder;
 import frc.robot.util.TunerConstants;
 import frc.robot.util.TunerConstants.TunerSwerveDrivetrain;
 
@@ -58,9 +59,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private double maxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
  
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
-    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.k180deg;
+    private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
-    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.kZero;
+    private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
 
@@ -370,6 +371,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         .withWheelForceFeedforwardsX(new double[] {.001, .001, .001, .001})
                         .withWheelForceFeedforwardsY(new double[] {.001, .001, .001, .001 })
                 );
+    }
+
+    public void resetGyro(){
+        resetRotation(new Rotation2d(0));
+        AngularPositionHolder.setAngleToHoldToCurrentPosition();
     }
 
 

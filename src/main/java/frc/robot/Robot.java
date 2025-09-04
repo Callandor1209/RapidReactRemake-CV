@@ -26,6 +26,7 @@ import frc.robot.commands.DrivetrainDefaultCommand;
 import frc.robot.commands.PutBallInTurretCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ConveyerSubsystem;
+import frc.robot.subsystems.GamePiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.util.MechanismSim;
@@ -46,12 +47,28 @@ public class Robot extends LoggedRobot {
     public static final CommandSwerveDrivetrain DRIVETRAIN_SUBSYSTEM = TunerConstants.createDrivetrain();
     public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
     public static final ConveyerSubsystem CONVEYER_SUBSYSTEM = new ConveyerSubsystem();
+
     public static final SwerveRequest.ApplyRobotSpeeds PATH_APPLY_ROBOT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
 
       public static final SwerveRequest.FieldCentric SWERVE_REQUEST_DRIVE = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+      public Pose3d pose3d;
 
       
+
+      public static final GamePiece BlueGamePiece1 = new GamePiece(8.25, 8.04, "one",false);
+      public static final GamePiece BlueGamePiece2 = new GamePiece(5.50, 6.90, "two",false);
+      public static final GamePiece BlueGamePiece3 = new GamePiece(4.36, 4.15, "three",false);
+      public static final GamePiece BlueGamePiece4 = new GamePiece(11.56, 5.42, "four",false);
+      public static final GamePiece BlueGamePiece5 = new GamePiece(4.92, 5.42, "five",false);
+      public static final GamePiece BlueGamePiece6 = new GamePiece(9.52, 7.45, "six",false);
+
+      public static final GamePiece RedGamePiece1 = new GamePiece(8.25, 0.26,"oneR",true);
+      public static final GamePiece RedGamePiece2 = new GamePiece(11.00, 1.40, "twoR",true);
+      public static final GamePiece RedGamePiece3 = new GamePiece(12.14, 4.15,"threeR",true);
+      public static final GamePiece RedGamePiece4 = new GamePiece(11.00, 6.905,"fourR",true);
+      public static final GamePiece RedGamePiece5 = new GamePiece(5.50, 1.40,"fiveR",true);
+      public static final GamePiece RedGamePiece6 = new GamePiece(4.94, 2.88,"sixR",true);
   
       
 
@@ -80,12 +97,11 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
 
 MechanismSim.updateIntakeRotationTotal(0);
 MechanismSim.updateTurretRotationTotal(0);
-Pose3d ballPose = new Pose3d(0, 0, 0, new Rotation3d());
-Logger.recordOutput("component/pose3d", ballPose);
 
 
 
-
+    if(Robot.isSimulation()){
+    }
 
     m_robotContainer = new RobotContainer();
     CONVEYER_SUBSYSTEM.setDefaultCommand(new PutBallInTurretCommand());
@@ -108,7 +124,7 @@ Logger.recordOutput("component/pose3d", ballPose);
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
         Pose2d pose2d = DRIVETRAIN_SUBSYSTEM.getState().Pose;
-    Pose3d pose3d = new Pose3d(
+     pose3d = new Pose3d(
         pose2d.getX(), 
         pose2d.getY(), 
         0.0,

@@ -8,14 +8,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class turretAuto extends Command {
+public class TurretAuto extends Command {
   /** Creates a new shootPieceAuto. */
-  public turretAuto() {
+  public TurretAuto() {
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(Robot.CONVEYER_SUBSYSTEM, Robot.TURRET_SUBSYSTEM , Robot.INTAKE_SUBSYSTEM);
   }
 
-  private boolean done = false;
+  private boolean done1 = false;
+  private boolean done2 = false;
 
   // Called when the command is initially scheduled.
   @Override
@@ -31,21 +32,30 @@ public class turretAuto extends Command {
       Robot.CONVEYER_SUBSYSTEM.moveConveyer();
       return;
     }
+    Robot.CONVEYER_SUBSYSTEM.stopConveyer();
     Robot.TURRET_SUBSYSTEM.goToTargetPosition(Robot.TURRET_SUBSYSTEM.findCenterAngle());
-    if(Robot.TURRET_SUBSYSTEM.getPosition() == Robot.TURRET_SUBSYSTEM.findCenterAngle()){
+    if( Robot.TURRET_SUBSYSTEM.findCenterAngle() - Robot.TURRET_SUBSYSTEM.getPosition() < 0.2){
       Robot.TURRET_SUBSYSTEM.shootTurret();
-      done = true;
+      done1 = true;
+    }
+    if(done1 && !Robot.CONVEYER_SUBSYSTEM.ballInturret()){
+
+        done2 = true;
+
+
     }
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    Robot.TURRET_SUBSYSTEM.findCenterAngle();
+  }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done;
+    return done2;
   }
 }
