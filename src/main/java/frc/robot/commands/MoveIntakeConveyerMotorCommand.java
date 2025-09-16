@@ -35,6 +35,6 @@ public class MoveIntakeConveyerMotorCommand extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return Robot.CONVEYER_SUBSYSTEM.ballInLowerSensor();
+    return Robot.CONVEYER_SUBSYSTEM.ballinUpperSensor();
   }
 }

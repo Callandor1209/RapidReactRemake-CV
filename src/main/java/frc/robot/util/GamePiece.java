@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems;
+package frc.robot.util;
 
 import org.littletonrobotics.junction.Logger;
 
@@ -15,6 +15,9 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
+import frc.robot.RobotContainer;
+import frc.robot.commands.DrivetrainDefaultCommand;
+import frc.robot.subsystems.ConveyerSubsystem;
 
 public class GamePiece extends SubsystemBase {
   double forwardMomentum;
@@ -36,7 +39,7 @@ public class GamePiece extends SubsystemBase {
    private boolean isRed;
    private boolean firing = false;
    private boolean inTurret = false;
-   private boolean robotRed;
+   private boolean robotRed = false;
    private boolean kicked;
    private boolean scored = false;
    InterpolatingDoubleTreeMap upwardsMomentumMap = new InterpolatingDoubleTreeMap();
@@ -50,23 +53,23 @@ public class GamePiece extends SubsystemBase {
     name2 = name;
     isRed = isred;
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d());
-    if(DriverStation.getAlliance().orElse(Alliance.Red) != null){
-      robotRed = true;
-    }
-    else{
-      robotRed = false;
-    }
+
   }
 
   @Override
   public void periodic() {
+    if(DriverStation.isEnabled()){
+      FINDMETHEVALUE();
+    }
+
+
     double robotX = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX();
     double robotY = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY();
     
 
-    if(gamePieceInRobot() && !inRobot && !kicked){
-      forwardMomentum = Robot.DRIVETRAIN_SUBSYSTEM.getState().Speeds.vxMetersPerSecond * 0.1;
-      sidewaysMomentum = Robot.DRIVETRAIN_SUBSYSTEM.getState().Speeds.vyMetersPerSecond * 0.1;
+    if(gamePieceInRobot() && !inRobot){
+      forwardMomentum = DrivetrainDefaultCommand.x2y2return()[0] * -0.1;
+      sidewaysMomentum = DrivetrainDefaultCommand.x2y2return()[1] * -0.1;
       kicked = true;
     } 
     else{
@@ -195,6 +198,10 @@ public class GamePiece extends SubsystemBase {
       if (shootPoseY < -0.03){
         poseY = poseY + 0.05;
       }
+      if(Math.abs(poseX) - 8.25 < 0.03  && Math.abs(poseX)- 8.25 > 0 && Math.abs(poseY) - 4.15 < 0.1&&  Math.abs(poseY)- 4.15 > 0  && poseZ  - 2.8 < 0.3){
+        upwardsMomentum = 0;
+        scored = true;
+        }
       if(shootPoseY > -0.03 && shootPoseY < 0.03 && shootPoseX > -0.03 && shootPoseX < 0.03 ){
         firing = false;
         inTurret = false;
@@ -203,10 +210,19 @@ public class GamePiece extends SubsystemBase {
       }
         
     }
-    if(Math.abs(poseX) - 8.25 < 0.1  && Math.abs(poseX)- 8.25 > 0 && Math.abs(poseY) - 4.15 < 0.1&&  Math.abs(poseY)- 4.15 > 0  && poseZ  - 2.8 < 0.3){
-    upwardsMomentum = 0;
-    scored = true;
+    if(poseY < 0.7 || poseY > 7.6 ){
+      sidewaysMomentum = sidewaysMomentum * -0.5;
+
+
     }
+    if( poseX < 0.7 || poseX > 15.9){
+      forwardMomentum = forwardMomentum * -0.5;
+    }
+    //if(((poseY - 1.26  - 4.15 < 0.2 && poseX + 0.53 - 8.25 < 0.2 )|| (poseY + 1.26 - 4.15 < 0.2 && poseX - 0.53 - 8.25 < 0.2) ||(poseY - 1.26  - 4.15 < 0.2 && poseX - 0.53 - 8.25 < 0.2 )|| (poseY + 1.26 - 4.15 < 0.2 && poseX + 0.53 - 8.25 < 0.2)) &&(poseY + 1.26 - 4.15 > 0 && poseX + 0.53 - 8.25 > 0 &&  poseY + 1.26 - 4.15 > 0 && poseX - 0.53 - 8.25 > 0)){
+      //sidewaysMomentum = sidewaysMomentum * -0.5;
+      //forwardMomentum = forwardMomentum * -0.5;
+    //}
+
     poseX = poseX + forwardMomentum;
     poseY = poseY + sidewaysMomentum;
     poseZ = poseZ + upwardsMomentum;
@@ -215,17 +231,17 @@ public class GamePiece extends SubsystemBase {
       poseZ = 0.13;
     }
     if(!scored){
-    gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d());
+    gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(0,0,Robot.DRIVETRAIN_SUBSYSTEM.getRotation3d().getZ()));
     }
     Logger.recordOutput("Game Piece /" + name2, gamePose);
   }
 
   public double[][] getRobotArea(){
     Pose2d pose2d = Robot.DRIVETRAIN_SUBSYSTEM.getPose();
-    double leftBoundry =  pose2d.getX() - 0.318;
-    double rightBoundry = pose2d.getX() + 0.318;
-    double upperBoundry = pose2d.getY() + 0.318;
-    double lowerBoundry = pose2d.getY() - 0.318;
+    double leftBoundry =  pose2d.getX() - 0.318 - 0.35;
+    double rightBoundry = pose2d.getX() + 0.318 + 0.35;
+    double upperBoundry = pose2d.getY() + 0.318 + 0.35;
+    double lowerBoundry = pose2d.getY() - 0.318 - 0.35;
     double[] rightUpperCorner = rotatePoint(rightBoundry, upperBoundry);
     double[] leftUpperCorner = rotatePoint(leftBoundry,upperBoundry);
     double[] rightLowerCorner = rotatePoint(rightBoundry, lowerBoundry);
@@ -234,36 +250,34 @@ public class GamePiece extends SubsystemBase {
     return doubleArray;
 
   }
-  /* 
-  public boolean gamePieceInRobot(){
-    if(gamePose.getX() < getRobotArea()[0][0] && gamePose.getX() > getRobotArea()[2][0] && gamePose.getY() < getRobotArea()[1][1] && gamePose.getY() > getRobotArea()[0][1]){
-      return true;
-    }
-     return false;
-  }
-     */
   public boolean gamePieceInRobot(){
     double[][] points = getRobotArea();
     return isPointInRobot(gamePose.getX(), gamePose.getY(), points);
 }
 
-//ai generated, need to come back and review (to replace the original gamepieceinrobot which doesn't rotate properly, 
-//instead this one takes each corner and checks if the distace in between them is crossed by a ray on both the x and y axis from the gamePiece,
-// if its crossed once it's inside, 0 or two times and its outside)
 private boolean isPointInRobot(double poseX, double posey, double[][] corners) {
     boolean inside = false;
-    int j = corners.length - 1;
+    int previousLength = corners.length - 1;
+    int i = 0;
     
-    for (int i = 0; i < corners.length; i++) {
-        double xi = corners[i][0], yi = corners[i][1];
-        double xj = corners[j][0], yj = corners[j][1];
-        
-        if (((yi > posey) != (yj > posey)) && (poseX < (xj - xi) * (posey - yi) / (yj - yi) + xi)) {
-            inside = !inside;
+    while (i < corners.length) {
+        double cornerX = corners[i][0], cornerY = corners[i][1];
+        double previousCornerX = corners[previousLength][0], previousCornerY = corners[previousLength][1]; 
+        if ((previousCornerY > poseY && cornerY < poseY || previousCornerY < poseY && cornerY > poseY)) {
+          double crossingX = previousCornerX + (poseY - previousCornerY) * (cornerX - previousCornerX) / (cornerY - previousCornerY);
+          if (poseX < crossingX) {
+              inside = !inside;
+          }
         }
-        j = i;
+        previousLength = i;
+        i++;
     }
     return inside;
+}
+
+public double[] returnXandY(){
+  double[] doubleArray2 = {poseX,poseY};
+  return doubleArray2;
 }
 
   public boolean gamePieceInIntake(){
@@ -283,5 +297,15 @@ private boolean isPointInRobot(double poseX, double posey, double[][] corners) {
     pointY = newpointY + newOriginY;
     double[] doubleArray = {pointX,pointY};
     return doubleArray; 
+    }
+    public void FINDMETHEVALUE(){
+
+        if(DriverStation.getAlliance().get() == Alliance.Red ){
+          robotRed = true;
+        }
+        else{
+          robotRed = false;
+        }
+      
     }
 }

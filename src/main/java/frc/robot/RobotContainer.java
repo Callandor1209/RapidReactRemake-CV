@@ -18,6 +18,8 @@ import frc.robot.commands.SpinTurretShootMotorCommand;
 import frc.robot.commands.TurretAuto;
 import frc.robot.commands.RotateTurretTowardsCenter;
 import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.util.CreationClass;
+import frc.robot.util.GamePiece;
 import frc.robot.util.MechanismSim;
 
 import org.littletonrobotics.junction.Logger;
@@ -58,11 +60,15 @@ public class RobotContainer {
 
     public final static CommandXboxController M_XBOX_CONTROLLER = new CommandXboxController(OperatorConstants.kDriverControllerPort );
         private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+        public static CreationClass CREATION_CLASS;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
+    if(Robot.isSimulation()){
+    CREATION_CLASS = new CreationClass();
+    }
 
     NamedCommands.registerCommand("intake", new MoveIntakeConveyerMotorCommand() );
     NamedCommands.registerCommand("shootTurret", new TurretAuto());
@@ -81,7 +87,7 @@ public class RobotContainer {
    */
   private void configureBindings() {
 
-     /* 
+     
     //Turret triggers
     new Trigger(() -> m_driverController.getL2Axis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
     new Trigger(() -> m_driverController.getR2Axis() > 0.1).whileTrue(new SpinTurretClockwise());
@@ -102,14 +108,14 @@ public class RobotContainer {
     m_driverController.R1().whileTrue(new MoveIntakeConveyerMotorCommand());
     m_driverController.square().whileTrue(new SpinTurretShootMotorCommand());
     m_driverController.circle().whileTrue(new MoveObjectBackwardsInConveyer());
-    */
+    
    
   
 
 
  
     //xbox controller triggers
-    
+ /*    
     new Trigger(() -> M_XBOX_CONTROLLER.getLeftTriggerAxis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
     new Trigger(() -> M_XBOX_CONTROLLER.getRightTriggerAxis() > 0.1).whileTrue(new SpinTurretClockwise());
     M_XBOX_CONTROLLER.y().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_UP));
@@ -131,6 +137,7 @@ public class RobotContainer {
     M_XBOX_CONTROLLER.povDown().onTrue(new DriveTwoInchesInDirection('B'));
     M_XBOX_CONTROLLER.povLeft().onTrue(new DriveTwoInchesInDirection('L'));
     M_XBOX_CONTROLLER.povRight().onTrue(new DriveTwoInchesInDirection('R'));
+    */
 
     
   }

@@ -59,11 +59,11 @@ public class TurretSubsystem extends SubsystemBase {
       
     }
     turretMotor.getConfigurator().apply(_talonFXConfiguration);
-    treeMap.put(4.0, 0.4);
-    treeMap.put(5.0, 0.5);
-    treeMap.put(10.0,0.6);
-    treeMap.put(1.0, 0.1);
-    treeMap.put(0.0, 0.0);
+    treeMap.put(0.0,0.1000);
+    treeMap.put(0.5, 0.15);
+    treeMap.put(1.0, 0.3);
+    treeMap.put(1.5,0.5);
+    treeMap.put(2.0, 0.60);
 
   }
 
@@ -133,11 +133,10 @@ public class TurretSubsystem extends SubsystemBase {
   }
 
   public void shootTurret(){
-    if(defaultCommand){
     double distance = Math.sqrt((8.25 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX())* (8.25 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX()) + (4.15 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()) *  (4.15 - Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()));
     distance = distance + 2.28;
     turretShootMotor.set(treeMap.get(distance));
-    }
+
     
   }
   public void stopTurretShoot(){
@@ -174,16 +173,9 @@ public class TurretSubsystem extends SubsystemBase {
     double currentAngle = currentPosition/10;
     currentAngle = Math.floor(currentAngle);
     currentAngle = currentAngle * 10;
-    currentPosition = currentPosition % 10;
-    if (-2.5 < currentPosition && currentPosition < 0  ) {
-      if (currentAngle > 0) {
-        targetAngle = targetAngle + currentAngle - 10;
-        return targetAngle;
-      }
-      targetAngle = targetAngle + currentAngle + 10;
-      return targetAngle;
-    }
+    currentAngle = currentAngle % 10;
     targetAngle = targetAngle + currentAngle;
+    System.out.println(targetAngle);
     return targetAngle; 
     
   }

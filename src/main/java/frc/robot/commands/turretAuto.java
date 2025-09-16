@@ -34,7 +34,7 @@ public class TurretAuto extends Command {
     }
     Robot.CONVEYER_SUBSYSTEM.stopConveyer();
     Robot.TURRET_SUBSYSTEM.goToTargetPosition(Robot.TURRET_SUBSYSTEM.findCenterAngle());
-    if( Robot.TURRET_SUBSYSTEM.findCenterAngle() - Robot.TURRET_SUBSYSTEM.getPosition() < 0.2){
+    if(Robot.TURRET_SUBSYSTEM.getSpeedM1() == 0){
       Robot.TURRET_SUBSYSTEM.shootTurret();
       done1 = true;
     }

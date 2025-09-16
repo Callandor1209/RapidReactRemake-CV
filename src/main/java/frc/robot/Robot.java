@@ -10,6 +10,7 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.photonvision.simulation.VisionSystemSim;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
@@ -26,9 +27,10 @@ import frc.robot.commands.DrivetrainDefaultCommand;
 import frc.robot.commands.PutBallInTurretCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ConveyerSubsystem;
-import frc.robot.subsystems.GamePiece;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.GamePiece;
 import frc.robot.util.MechanismSim;
 import frc.robot.util.TunerConstants;
 
@@ -47,6 +49,7 @@ public class Robot extends LoggedRobot {
     public static final CommandSwerveDrivetrain DRIVETRAIN_SUBSYSTEM = TunerConstants.createDrivetrain();
     public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
     public static final ConveyerSubsystem CONVEYER_SUBSYSTEM = new ConveyerSubsystem();
+    public static final VisionSubsystem VISION_SUBSYSTEM = new VisionSubsystem();
 
     public static final SwerveRequest.ApplyRobotSpeeds PATH_APPLY_ROBOT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -56,19 +59,6 @@ public class Robot extends LoggedRobot {
 
       
 
-      public static final GamePiece BlueGamePiece1 = new GamePiece(8.25, 8.04, "one",false);
-      public static final GamePiece BlueGamePiece2 = new GamePiece(5.50, 6.90, "two",false);
-      public static final GamePiece BlueGamePiece3 = new GamePiece(4.36, 4.15, "three",false);
-      public static final GamePiece BlueGamePiece4 = new GamePiece(11.56, 5.42, "four",false);
-      public static final GamePiece BlueGamePiece5 = new GamePiece(4.92, 5.42, "five",false);
-      public static final GamePiece BlueGamePiece6 = new GamePiece(9.52, 7.45, "six",false);
-
-      public static final GamePiece RedGamePiece1 = new GamePiece(8.25, 0.26,"oneR",true);
-      public static final GamePiece RedGamePiece2 = new GamePiece(11.00, 1.40, "twoR",true);
-      public static final GamePiece RedGamePiece3 = new GamePiece(12.14, 4.15,"threeR",true);
-      public static final GamePiece RedGamePiece4 = new GamePiece(11.00, 6.905,"fourR",true);
-      public static final GamePiece RedGamePiece5 = new GamePiece(5.50, 1.40,"fiveR",true);
-      public static final GamePiece RedGamePiece6 = new GamePiece(4.94, 2.88,"sixR",true);
   
       
 
@@ -80,6 +70,7 @@ public class Robot extends LoggedRobot {
    * initialization code.
    */
   public Robot() {
+
 
     
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
@@ -100,8 +91,7 @@ MechanismSim.updateTurretRotationTotal(0);
 
 
 
-    if(Robot.isSimulation()){
-    }
+
 
     m_robotContainer = new RobotContainer();
     CONVEYER_SUBSYSTEM.setDefaultCommand(new PutBallInTurretCommand());
@@ -187,5 +177,7 @@ MechanismSim.updateTurretRotationTotal(0);
 
   /** This function is called periodically whilst in simulation. */
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+VISION_SUBSYSTEM.simUpdate();
+  }
 }
