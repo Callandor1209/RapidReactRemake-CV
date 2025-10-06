@@ -65,7 +65,6 @@ public class DrivetrainDefaultCommand extends Command {
     if (Robot.isSimulation()) {
       double robotX = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX();
       double robotY = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY();
-      System.out.println(DriverStation.getAlliance());
       if(DriverStation.getAlliance().get() == Alliance.Red){
       if (y > 0 && robotY < 0.7) {
         y = y * -0.5;

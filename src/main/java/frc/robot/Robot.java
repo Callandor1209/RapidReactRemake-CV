@@ -173,7 +173,9 @@ MechanismSim.updateTurretRotationTotal(0);
 
   /** This function is called once when the robot is first started up. */
   @Override
-  public void simulationInit() {}
+  public void simulationInit() {
+    SmartDashboard.putData(VISION_SUBSYSTEM.visionSim.getDebugField());
+  }
 
   /** This function is called periodically whilst in simulation. */
   @Override

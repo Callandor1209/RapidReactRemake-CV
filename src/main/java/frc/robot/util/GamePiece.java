@@ -29,9 +29,9 @@ public class GamePiece extends SubsystemBase {
   String name2;
 
   private boolean inRobot = false;
-  double poseX;
-   double poseY;
-   double poseZ;
+  double poseX = 0;
+   double poseY = 0;
+   double poseZ = 0;
    double shootPoseX;
    double shootPoseY;
    double targetX;
@@ -276,7 +276,7 @@ private boolean isPointInRobot(double poseX, double posey, double[][] corners) {
 }
 
 public double[] returnXandY(){
-  double[] doubleArray2 = {poseX,poseY};
+  double[] doubleArray2 = {poseX,poseY,poseZ};
   return doubleArray2;
 }
 

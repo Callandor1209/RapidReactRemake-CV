@@ -175,7 +175,6 @@ public class TurretSubsystem extends SubsystemBase {
     currentAngle = currentAngle * 10;
     currentAngle = currentAngle % 10;
     targetAngle = targetAngle + currentAngle;
-    System.out.println(targetAngle);
     return targetAngle; 
     
   }
