@@ -11,7 +11,7 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
+
 
 import java.util.List;
 
@@ -80,36 +80,19 @@ cameraSim.enableDrawWireframe(true);
   public void periodic() {
     // This method will be called once per scheduler run
 
-    i = RobotContainer.CREATION_CLASS.creationArray.length - 1;
-
+    i = Robot.CREATION_CLASS.creationArray.length - 1;
+    //once, when the robot first activates the vision targets are added to the sim
     while (i >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
-
-     
-
       visionSim.addVisionTargets(visionTargetArray[i]);
-
       if (i == 0) {
         x++;
       }
-
       i--;
-
     }
-    switch(x){
-      case 1:
-        x = 2;
-        break;
-      case 2:
-        x =3;
-        break;
-      case 3:
-        x =4;
-        break;
-      case 4:
+      if(x==5){
         updateTargets();
-        x = 1;
-        break;
-      default: break;
+      }
+      x++;
     }
     List<PhotonPipelineResult>  pipelineResult = frontCamera.getAllUnreadResults();
     if(!pipelineResult.isEmpty()){
@@ -136,7 +119,7 @@ cameraSim.enableDrawWireframe(true);
 
   public void updateTargets(){
     while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
-      double[] xyz = RobotContainer.CREATION_CLASS.creationArray[i].returnXandY();
+      double[] xyz = Robot.CREATION_CLASS.creationArray[i].returnXandY();
       Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, 0));
       visionTargetArray[i].setPose(targetPose);
       i--;

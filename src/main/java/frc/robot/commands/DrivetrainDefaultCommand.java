@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.Constants.Constants;
 import frc.robot.util.AngularPositionHolder;
 
@@ -36,13 +35,13 @@ public class DrivetrainDefaultCommand extends Command {
     Rotation2d robotRotation = Robot.DRIVETRAIN_SUBSYSTEM.getPoseMA().getRotation();
     double targetRotation = robotRotation.getRadians();
     double controllerDirection = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? 1 : -1;
-    double x = RobotContainer.m_driverController.getRawAxis(1) * controllerDirection;
-    double y = RobotContainer.m_driverController.getRawAxis(0) * controllerDirection;
+    double x = Robot.m_driverController.getRawAxis(1) * controllerDirection;
+    double y = Robot.m_driverController.getRawAxis(0) * controllerDirection;
     // playstation controller
-    //double r = findR(RobotContainer.m_driverController.getRawAxis(5), RobotContainer.m_driverController.getRawAxis(2));
+    //double r = findR(Robot.m_driverController.getRawAxis(5), Robot.m_driverController.getRawAxis(2));
     // xbox controller
-     double r = findR(RobotContainer.m_driverController.getRawAxis(5) ,
-     RobotContainer.m_driverController.getRawAxis(4));
+     double r = findR(Robot.m_driverController.getRawAxis(5) ,
+     Robot.m_driverController.getRawAxis(4));
     x = squareAndKeepSign(x);
     y = squareAndKeepSign(y);
     r = squareAndKeepSign(r);
@@ -54,7 +53,7 @@ public class DrivetrainDefaultCommand extends Command {
     y = y * maxVelocity;
     r = r * Robot.DRIVETRAIN_SUBSYSTEM.getMaxRotationalVelocity();
 
-    if (RobotContainer.m_driverController.L1().getAsBoolean()|| RobotContainer.M_XBOX_CONTROLLER.leftBumper().getAsBoolean()) {
+    if (Robot.m_driverController.L1().getAsBoolean()|| Robot.M_XBOX_CONTROLLER.leftBumper().getAsBoolean()) {
       x = x * Constants.CUT_POWER;
       y = y * Constants.CUT_POWER;
       r = r * Constants.CUT_POWER;

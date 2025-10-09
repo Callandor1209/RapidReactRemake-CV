@@ -44,12 +44,18 @@ public class Robot extends LoggedRobot {
   
   private Command m_autonomousCommand;
 
-  private final RobotContainer m_robotContainer;
     public static final TurretSubsystem TURRET_SUBSYSTEM = new TurretSubsystem();
     public static final CommandSwerveDrivetrain DRIVETRAIN_SUBSYSTEM = TunerConstants.createDrivetrain();
     public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
     public static final ConveyerSubsystem CONVEYER_SUBSYSTEM = new ConveyerSubsystem();
     public static final VisionSubsystem VISION_SUBSYSTEM = new VisionSubsystem();
+
+      public final static CommandPS5Controller m_driverController =
+      new CommandPS5Controller(OperatorConstants.kDriverControllerPort);
+
+    public final static CommandXboxController M_XBOX_CONTROLLER = new CommandXboxController(OperatorConstants.kDriverControllerPort );
+        private final SendableChooser<Command> m_chooser = new SendableChooser<>();
+        public static CreationClass CREATION_CLASS;
 
     public static final SwerveRequest.ApplyRobotSpeeds PATH_APPLY_ROBOT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -73,7 +79,7 @@ public class Robot extends LoggedRobot {
 
 
     
-    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    
     // autonomous chooser on the dashboard.
     Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
@@ -89,11 +95,17 @@ Logger.start(); // Start logging! No more data receivers, replay sources, or met
 MechanismSim.updateIntakeRotationTotal(0);
 MechanismSim.updateTurretRotationTotal(0);
 
+    configureBindings();
+    if(Robot.isSimulation()){
+    CREATION_CLASS = new CreationClass();
+    }
 
+    NamedCommands.registerCommand("intake", new MoveIntakeConveyerMotorCommand() );
+    NamedCommands.registerCommand("shootTurret", new TurretAuto());
+    NamedCommands.registerCommand("Auto Command", new autoCommand(Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX(), Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()));
+      m_chooser.setDefaultOption("Auto 1", new PathPlannerAuto("auto1"));
 
-
-
-    m_robotContainer = new RobotContainer();
+  SmartDashboard.putData("Auto choices", m_chooser);
     CONVEYER_SUBSYSTEM.setDefaultCommand(new PutBallInTurretCommand());
     DRIVETRAIN_SUBSYSTEM.setDefaultCommand(new DrivetrainDefaultCommand());
   
@@ -132,10 +144,9 @@ MechanismSim.updateTurretRotationTotal(0);
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = this.getAutonomousCommand();
     // schedule the autonomous command (example)
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
@@ -182,4 +193,69 @@ MechanismSim.updateTurretRotationTotal(0);
   public void simulationPeriodic() {
 VISION_SUBSYSTEM.simUpdate();
   }
+    public Command getAutonomousCommand() {
+    return m_chooser.getSelected();
+  }
+
+    private void configureBindings() {
+
+     /* 
+    //Turret triggers
+    new Trigger(() -> m_driverController.getL2Axis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
+    new Trigger(() -> m_driverController.getR2Axis() > 0.1).whileTrue(new SpinTurretClockwise());
+    //Intake triggers
+    m_driverController.triangle().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_UP));
+    m_driverController.cross().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_DOWN));
+    //new Trigger(() -> Math.abs(m_driverController.getLeftY()) > 0.1 ||Math.abs(m_driverController.getLeftX()) > 0.1 ||  Math.abs(m_driverController.getRightX()) > 0.1  || Math.abs(m_driverController.getRightY()) >0.1).whileTrue(new DrivetrainDefaultCommand());
+    new Trigger(() -> m_driverController.getR2Axis() > 0.9 && m_driverController.getL2Axis() > 0.99).onTrue(new Command(){
+      public void initialize(){
+        if (Robot.isSimulation()) {
+          Robot.TURRET_SUBSYSTEM.setTurretDefault();
+        }
+      }
+      public boolean isFinished(){
+        return true;
+      }
+    });
+    m_driverController.R1().whileTrue(new MoveIntakeConveyerMotorCommand());
+    m_driverController.square().whileTrue(new SpinTurretShootMotorCommand());
+    m_driverController.circle().whileTrue(new MoveObjectBackwardsInConveyer());
+    */
+    
+   
+  
+
+
+ 
+    //xbox controller triggers
+     
+    new Trigger(() -> M_XBOX_CONTROLLER.getLeftTriggerAxis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
+    new Trigger(() -> M_XBOX_CONTROLLER.getRightTriggerAxis() > 0.1).whileTrue(new SpinTurretClockwise());
+    M_XBOX_CONTROLLER.y().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_UP));
+    M_XBOX_CONTROLLER.a().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_DOWN));
+    new Trigger(() -> M_XBOX_CONTROLLER.getRightTriggerAxis() > 0.9 && M_XBOX_CONTROLLER.getLeftTriggerAxis() > 0.99).onTrue(new Command(){
+      public void initialize(){
+        if (Robot.isSimulation()) {
+          Robot.TURRET_SUBSYSTEM.setTurretDefault();
+        }
+      }
+      public boolean isFinished(){
+        return true;
+      }
+    });
+    M_XBOX_CONTROLLER.rightBumper().whileTrue(new MoveIntakeConveyerMotorCommand());
+    M_XBOX_CONTROLLER.x().whileTrue(new SpinTurretShootMotorCommand());
+    M_XBOX_CONTROLLER.b().whileTrue(new MoveObjectBackwardsInConveyer());
+    M_XBOX_CONTROLLER.povUp().onTrue(new DriveTwoInchesInDirection('F'));
+    M_XBOX_CONTROLLER.povDown().onTrue(new DriveTwoInchesInDirection('B'));
+    M_XBOX_CONTROLLER.povLeft().onTrue(new DriveTwoInchesInDirection('L'));
+    M_XBOX_CONTROLLER.povRight().onTrue(new DriveTwoInchesInDirection('R'));
+    
+
+    
+  }  
+
+
+
+
 }

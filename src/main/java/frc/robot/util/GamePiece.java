@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
-import frc.robot.RobotContainer;
 import frc.robot.commands.DrivetrainDefaultCommand;
 import frc.robot.subsystems.ConveyerSubsystem;
 
