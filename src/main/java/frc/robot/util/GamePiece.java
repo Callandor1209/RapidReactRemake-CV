@@ -183,14 +183,11 @@ public class GamePiece extends SubsystemBase {
     if(firing){
       shootPoseX =  poseX -8.25; 
       shootPoseY =  poseY -4.15 ;
-      System.out.println("is here");
       if(shootPoseX > 0.03){
         poseX = poseX - 0.05;
-        System.out.println("is here2");
       }
       if(shootPoseX < -0.03){
         poseX = poseX + 0.05;
-        System.out.println("is here3");
       }
       if(shootPoseY > 0.03){
         poseY = poseY - 0.05;

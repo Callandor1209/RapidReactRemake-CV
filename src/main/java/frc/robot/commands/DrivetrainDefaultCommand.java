@@ -39,10 +39,10 @@ public class DrivetrainDefaultCommand extends Command {
     double x = RobotContainer.m_driverController.getRawAxis(1) * controllerDirection;
     double y = RobotContainer.m_driverController.getRawAxis(0) * controllerDirection;
     // playstation controller
-    double r = findR(RobotContainer.m_driverController.getRawAxis(5), RobotContainer.m_driverController.getRawAxis(2));
+    //double r = findR(RobotContainer.m_driverController.getRawAxis(5), RobotContainer.m_driverController.getRawAxis(2));
     // xbox controller
-     //double r = findR(RobotContainer.m_driverController.getRawAxis(5) ,
-     //RobotContainer.m_driverController.getRawAxis(4));
+     double r = findR(RobotContainer.m_driverController.getRawAxis(5) ,
+     RobotContainer.m_driverController.getRawAxis(4));
     x = squareAndKeepSign(x);
     y = squareAndKeepSign(y);
     r = squareAndKeepSign(r);
@@ -107,8 +107,10 @@ public class DrivetrainDefaultCommand extends Command {
       } */
     }
     updateXandY(x, y);
+    if(!Robot.DRIVETRAIN_SUBSYSTEM.noDefault){
 
     Robot.DRIVETRAIN_SUBSYSTEM.drive(x, y, -r);
+    }
   }
 
   private double squareAndKeepSign(double num) {

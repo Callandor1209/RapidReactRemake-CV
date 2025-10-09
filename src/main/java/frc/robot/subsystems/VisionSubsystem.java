@@ -120,6 +120,10 @@ cameraSim.enableDrawWireframe(true);
      distanceY = bestTarget.getBestCameraToTarget().getTranslation().getY();
     System.out.println(distanceX + " x, y " + distanceY );
     }
+    else{
+      distanceX = 0;
+      distanceY = 0;
+    }
     }
 
 
