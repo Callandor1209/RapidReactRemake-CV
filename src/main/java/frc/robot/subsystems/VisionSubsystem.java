@@ -93,7 +93,7 @@ cameraSim.enableDrawWireframe(true);
         updateTargets();
       }
       x++;
-    }
+  
     List<PhotonPipelineResult>  pipelineResult = frontCamera.getAllUnreadResults();
     if(!pipelineResult.isEmpty()){
     PhotonPipelineResult singularResult = pipelineResult.get(pipelineResult.size() - 1);
@@ -107,7 +107,7 @@ cameraSim.enableDrawWireframe(true);
       distanceX = 0;
       distanceY = 0;
     }
-    }
+  
 
 
   }
