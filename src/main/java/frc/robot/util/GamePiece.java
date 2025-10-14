@@ -23,7 +23,7 @@ public class GamePiece extends SubsystemBase {
   double gravity = -0.98;
   double upwardsMomentum;
   double sidewaysMomentum;
-  double offset = 0.005;
+  double offset = 0;
   Pose3d gamePose;
   String name2;
 
@@ -41,7 +41,11 @@ public class GamePiece extends SubsystemBase {
    private boolean robotRed = false;
    private boolean kicked;
    private boolean scored = false;
+   double robotX;
+   double robotY;
    InterpolatingDoubleTreeMap upwardsMomentumMap = new InterpolatingDoubleTreeMap();
+   InterpolatingDoubleTreeMap conveyerMapZ = new InterpolatingDoubleTreeMap();
+   InterpolatingDoubleTreeMap conveyerMapY = new InterpolatingDoubleTreeMap();
 
 
 
@@ -52,6 +56,7 @@ public class GamePiece extends SubsystemBase {
     name2 = name;
     isRed = isred;
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d());
+    addThingsToTreeMap();
 
   }
 
@@ -62,8 +67,8 @@ public class GamePiece extends SubsystemBase {
       //gets the alliance
       getRobotValue();
     }
-    double robotX = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX();
-    double robotY = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY();
+    robotX = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX();
+     robotY = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY();
     //if the game pieces coordinates are in the robot but it has not been picked up by the robot then move it
     if(gamePieceInRobot() && !inRobot){
       runIntoGamePiece();
@@ -120,22 +125,9 @@ public class GamePiece extends SubsystemBase {
     Logger.recordOutput("Game Piece /" + name2, gamePose);
   }
 
-  public double[][] getRobotArea(){
-    Pose2d pose2d = Robot.DRIVETRAIN_SUBSYSTEM.getPose();
-    double leftBoundry =  pose2d.getX() - 0.318 - 0.35;
-    double rightBoundry = pose2d.getX() + 0.318 + 0.35;
-    double upperBoundry = pose2d.getY() + 0.318 + 0.35;
-    double lowerBoundry = pose2d.getY() - 0.318 - 0.35;
-    double[] rightUpperCorner = rotatePoint(rightBoundry, upperBoundry);
-    double[] leftUpperCorner = rotatePoint(leftBoundry,upperBoundry);
-    double[] rightLowerCorner = rotatePoint(rightBoundry, lowerBoundry);
-    double[] leftLowerCorner = rotatePoint(leftBoundry,lowerBoundry);
-    double[][] doubleArray = {rightLowerCorner,rightUpperCorner,leftLowerCorner,leftUpperCorner};
-    return doubleArray;
 
-  }
   public boolean gamePieceInRobot(){
-    double[][] points = getRobotArea();
+    double[][] points = Robot.DRIVE_TRAIN_SIMULATION_SUBSYSTEM.getRobotArea();
     return isPointInRobot(gamePose.getX(), gamePose.getY(), points);
 }
 
@@ -165,24 +157,11 @@ public double[] returnXandY(){
 }
 
   public boolean gamePieceInIntake(){
-    double[] numbers = rotatePoint(Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX() + 0.1, Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()-0.38);
+    double[] numbers = Robot.DRIVE_TRAIN_SIMULATION_SUBSYSTEM.rotatePoint(Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX() + 0.1, Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()-0.38);
     return Math.abs(gamePose.getX() - numbers[0]) < 0.6 && Math.abs(gamePose.getY() - numbers[1]) < 0.4;
 
   }
-  //Maths
-  public double[] rotatePoint(double pointX, double pointY){
-    double degrees = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getRotation().getRadians();
-    double newOriginX = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX();
-    double newOriginY = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY();
-    double translatedX = pointX - newOriginX;
-    double translatedY = pointY - newOriginY;
-    double newpointX = translatedX * Math.cos(degrees) - translatedY * Math.sin(degrees);
-    double newpointY = translatedX * Math.sin(degrees) + translatedY * Math.cos(degrees);
-    pointX = newpointX + newOriginX;
-    pointY = newpointY + newOriginY;
-    double[] doubleArray = {pointX,pointY};
-    return doubleArray; 
-    }
+
 
 
     public void getRobotValue(){
@@ -256,22 +235,21 @@ public double[] returnXandY(){
     }
 
     public void moveWithRobot(){
-      poseX = robotX;
-      poseY = robotY - offset;
+
       if(Robot.CONVEYER_SUBSYSTEM.getConveyerSpeed() > 0.1 ){
-        if(offset < 0.115){
+        if(offset < 1){
         offset = offset + 0.01;
         }
-        if(poseZ < 0.72 && offset > 0.114 ){
-          poseZ = poseZ + 0.01;
-        }
-        if(offset > 0.114 && poseZ >= 0.71){
+        poseZ = conveyerMapZ.get(offset);
+        poseY = robotY + conveyerMapY.get(offset);
+        if(offset > 0.99 && poseZ >= 0.71){
           ConveyerSubsystem.turretSensor = true;
           ConveyerSubsystem.upperSensor = false;
           inTurret = true;
         }
 
       }
+        
       if(Robot.CONVEYER_SUBSYSTEM.getConveyerSpeed() < -0.1 && inRobot == true){
           if(poseZ > 0.13){
             poseZ = poseZ - 0.01;
@@ -316,5 +294,22 @@ public double[] returnXandY(){
         inRobot = false;
         ConveyerSubsystem.turretSensor = false;
       }
+    }
+
+    public void addThingsToTreeMap(){
+      conveyerMapZ.put(0.0,0.33);
+      conveyerMapZ.put(0.7, 0.33);
+      conveyerMapZ.put(0.8, 0.3);
+      conveyerMapZ.put(0.9, 0.7);
+      conveyerMapZ.put(1.0, 0.72);
+
+      conveyerMapY.put(0.0, 0.0);
+      conveyerMapY.put(0.1, 0.01);
+      conveyerMapY.put(0.5, 0.05);
+      conveyerMapY.put(0.6, 0.055);
+      conveyerMapY.put(0.7, 0.07);
+      conveyerMapY.put(0.9, 0.08);
+      conveyerMapY.put(1.0,0.115);
+
     }
 }

@@ -38,10 +38,9 @@ public class DrivetrainDefaultCommand extends Command {
     double x = Robot.m_driverController.getRawAxis(1) * controllerDirection;
     double y = Robot.m_driverController.getRawAxis(0) * controllerDirection;
     // playstation controller
-    //double r = findR(Robot.m_driverController.getRawAxis(5), Robot.m_driverController.getRawAxis(2));
+    double r = findR(Robot.m_driverController.getRawAxis(5), Robot.m_driverController.getRawAxis(2));
     // xbox controller
-     double r = findR(Robot.m_driverController.getRawAxis(5) ,
-     Robot.m_driverController.getRawAxis(4));
+     //double r = findR(Robot.m_driverController.getRawAxis(5) ,Robot.m_driverController.getRawAxis(4));
     x = squareAndKeepSign(x);
     y = squareAndKeepSign(y);
     r = squareAndKeepSign(r);

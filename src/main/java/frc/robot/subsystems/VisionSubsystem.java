@@ -39,6 +39,8 @@ public class VisionSubsystem extends SubsystemBase {
   int i;
   int x = 0;
 
+  double yaw = 0;
+
   TargetModel targetModel = new TargetModel(0.5, 0.25);
         Pose3d targetPose = new Pose3d(0,0,0, new Rotation3d());
         VisionTargetSim[] visionTargetArray = {
@@ -78,35 +80,40 @@ cameraSim.enableDrawWireframe(true);
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-
-    i = Robot.CREATION_CLASS.creationArray.length - 1;
-    //once, when the robot first activates the vision targets are added to the sim
-    while (i >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
-      visionSim.addVisionTargets(visionTargetArray[i]);
-      if (i == 0) {
-        x++;
-      }
-      i--;
+    if(!DriverStation.isEnabled()){
+      return;
     }
+    // This method will be called once per scheduler run
+    int i2 = Robot.CREATION_CLASS.creationArray.length - 1;
+    //once, when the robot first activates the vision targets are added to the sim
+    while (i2 >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
+      visionSim.addVisionTargets(visionTargetArray[i2]);
+      i2--;
+    }
+    
       if(x==5){
         updateTargets();
+        x= 1;
       }
       x++;
+      
+
+
   
     List<PhotonPipelineResult>  pipelineResult = frontCamera.getAllUnreadResults();
     if(!pipelineResult.isEmpty()){
     PhotonPipelineResult singularResult = pipelineResult.get(pipelineResult.size() - 1);
     if(singularResult.hasTargets()){
     PhotonTrackedTarget bestTarget = singularResult.getBestTarget();
-     distanceX = bestTarget.getBestCameraToTarget().getTranslation().getX();
-     distanceY = bestTarget.getBestCameraToTarget().getTranslation().getY();
+     distanceX = bestTarget.getBestCameraToTarget().getX();
+     distanceY = bestTarget.getBestCameraToTarget().getY();
     System.out.println(distanceX + " x, y " + distanceY );
     }
     else{
       distanceX = 0;
       distanceY = 0;
     }
+  }
   
 
 
@@ -118,9 +125,17 @@ cameraSim.enableDrawWireframe(true);
   }
 
   public void updateTargets(){
+    i = Robot.CREATION_CLASS.creationArray.length -1;
+    if(yaw < 360){
+      yaw = yaw + 90;
+    }
+    else{
+      yaw = 0;
+    }
     while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
       double[] xyz = Robot.CREATION_CLASS.creationArray[i].returnXandY();
-      Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, 0));
+
+      Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, yaw));
       visionTargetArray[i].setPose(targetPose);
       i--;
       

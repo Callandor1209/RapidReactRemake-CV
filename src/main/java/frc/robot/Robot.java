@@ -14,22 +14,40 @@ import org.photonvision.simulation.VisionSystemSim;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandPS5Controller;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.Constants.OperatorConstants;
+import frc.robot.Constants.IntakeConstants.INTAKE_POSITIONS;
+import frc.robot.commands.DriveTwoInchesInDirection;
 import frc.robot.commands.DrivetrainDefaultCommand;
+import frc.robot.commands.IntakeGoToPositionCommand;
+import frc.robot.commands.MoveIntakeConveyerMotorCommand;
+import frc.robot.commands.MoveObjectBackwardsInConveyer;
 import frc.robot.commands.PutBallInTurretCommand;
+import frc.robot.commands.SpinTurretClockwise;
+import frc.robot.commands.SpinTurretCounterClockwise;
+import frc.robot.commands.SpinTurretShootMotorCommand;
+import frc.robot.commands.TurretAuto;
+import frc.robot.commands.autoCommand;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.ConveyerSubsystem;
+import frc.robot.subsystems.DriveTrainSimulationSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
+import frc.robot.util.CreationClass;
 import frc.robot.util.GamePiece;
 import frc.robot.util.MechanismSim;
 import frc.robot.util.TunerConstants;
@@ -48,7 +66,8 @@ public class Robot extends LoggedRobot {
     public static final CommandSwerveDrivetrain DRIVETRAIN_SUBSYSTEM = TunerConstants.createDrivetrain();
     public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
     public static final ConveyerSubsystem CONVEYER_SUBSYSTEM = new ConveyerSubsystem();
-    public static final VisionSubsystem VISION_SUBSYSTEM = new VisionSubsystem();
+    public static  VisionSubsystem VISION_SUBSYSTEM;
+    public static final DriveTrainSimulationSubsystem DRIVE_TRAIN_SIMULATION_SUBSYSTEM = new DriveTrainSimulationSubsystem();
 
       public final static CommandPS5Controller m_driverController =
       new CommandPS5Controller(OperatorConstants.kDriverControllerPort);
@@ -98,11 +117,12 @@ MechanismSim.updateTurretRotationTotal(0);
     configureBindings();
     if(Robot.isSimulation()){
     CREATION_CLASS = new CreationClass();
+    VISION_SUBSYSTEM = new VisionSubsystem();
     }
 
     NamedCommands.registerCommand("intake", new MoveIntakeConveyerMotorCommand() );
     NamedCommands.registerCommand("shootTurret", new TurretAuto());
-    NamedCommands.registerCommand("Auto Command", new autoCommand(Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX(), Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY()));
+    NamedCommands.registerCommand("Auto Command", new autoCommand(new Pose2d(4,2,new Rotation2d())));
       m_chooser.setDefaultOption("Auto 1", new PathPlannerAuto("auto1"));
 
   SmartDashboard.putData("Auto choices", m_chooser);
@@ -199,7 +219,7 @@ VISION_SUBSYSTEM.simUpdate();
 
     private void configureBindings() {
 
-     /* 
+     
     //Turret triggers
     new Trigger(() -> m_driverController.getL2Axis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
     new Trigger(() -> m_driverController.getR2Axis() > 0.1).whileTrue(new SpinTurretClockwise());
@@ -220,10 +240,10 @@ VISION_SUBSYSTEM.simUpdate();
     m_driverController.R1().whileTrue(new MoveIntakeConveyerMotorCommand());
     m_driverController.square().whileTrue(new SpinTurretShootMotorCommand());
     m_driverController.circle().whileTrue(new MoveObjectBackwardsInConveyer());
-    */
+    
  
     //xbox controller triggers
-     
+     /* 
     new Trigger(() -> M_XBOX_CONTROLLER.getLeftTriggerAxis() > 0.1).whileTrue(new SpinTurretCounterClockwise());
     new Trigger(() -> M_XBOX_CONTROLLER.getRightTriggerAxis() > 0.1).whileTrue(new SpinTurretClockwise());
     M_XBOX_CONTROLLER.y().onTrue(new IntakeGoToPositionCommand(INTAKE_POSITIONS.INTAKE_POSITION_UP));
@@ -246,7 +266,7 @@ VISION_SUBSYSTEM.simUpdate();
     M_XBOX_CONTROLLER.povLeft().onTrue(new DriveTwoInchesInDirection('L'));
     M_XBOX_CONTROLLER.povRight().onTrue(new DriveTwoInchesInDirection('R'));
     
-
+    */
     
   }  
 
