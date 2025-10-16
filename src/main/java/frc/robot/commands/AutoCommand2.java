@@ -41,7 +41,7 @@ public class AutoCommand2 extends Command {
   public void execute() {
         if(Math.abs(driveTrainSubsystem.getPose().getX() - x4) < 0.1 && Math.abs(driveTrainSubsystem.getPose().getY() - y4) < 0.1 && !done ){
       Robot.INTAKE_SUBSYSTEM.startIntakeConveyer();
-      new TurretAuto();
+      new TurretAuto().schedule();
       timer.start();
 
       driveTrainSubsystem.noDefault = true;

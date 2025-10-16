@@ -44,13 +44,14 @@ public class TurretAuto extends Command {
 
 
     }
+    System.out.println(done2);
 
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    Robot.TURRET_SUBSYSTEM.findCenterAngle();
+    Robot.TURRET_SUBSYSTEM.stopTurretShoot();;
   }
 
   // Returns true when the command should end.

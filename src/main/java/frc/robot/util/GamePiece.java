@@ -23,7 +23,7 @@ public class GamePiece extends SubsystemBase {
   double gravity = -0.98;
   double upwardsMomentum;
   double sidewaysMomentum;
-  double offset = 0;
+  double offset = 0.50;
   Pose3d gamePose;
   String name2;
 
@@ -242,6 +242,7 @@ public double[] returnXandY(){
         }
         poseZ = conveyerMapZ.get(offset);
         poseY = robotY + conveyerMapY.get(offset);
+        poseX = robotX;
         if(offset > 0.99 && poseZ >= 0.71){
           ConveyerSubsystem.turretSensor = true;
           ConveyerSubsystem.upperSensor = false;
