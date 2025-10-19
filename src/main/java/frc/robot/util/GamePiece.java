@@ -300,7 +300,7 @@ public double[] returnXandY(){
     public void addThingsToTreeMap(){
       conveyerMapZ.put(0.0,0.33);
       conveyerMapZ.put(0.7, 0.33);
-      conveyerMapZ.put(0.8, 0.3);
+      conveyerMapZ.put(0.8, 0.5);
       conveyerMapZ.put(0.9, 0.7);
       conveyerMapZ.put(1.0, 0.72);
 
@@ -308,8 +308,8 @@ public double[] returnXandY(){
       conveyerMapY.put(0.1, 0.01);
       conveyerMapY.put(0.5, 0.05);
       conveyerMapY.put(0.6, 0.055);
-      conveyerMapY.put(0.7, 0.07);
-      conveyerMapY.put(0.9, 0.08);
+      conveyerMapY.put(0.7, 0.08);
+      conveyerMapY.put(0.9, 0.010);
       conveyerMapY.put(1.0,0.115);
 
     }

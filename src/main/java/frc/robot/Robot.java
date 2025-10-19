@@ -40,8 +40,8 @@ import frc.robot.commands.SpinTurretClockwise;
 import frc.robot.commands.SpinTurretCounterClockwise;
 import frc.robot.commands.SpinTurretShootMotorCommand;
 import frc.robot.commands.TurretAuto;
-import frc.robot.commands.autoCommand;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.commands.AutoCommand1;
+import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ConveyerSubsystem;
 import frc.robot.subsystems.DriveTrainSimulationSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -63,7 +63,7 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
     public static final TurretSubsystem TURRET_SUBSYSTEM = new TurretSubsystem();
-    public static final CommandSwerveDrivetrain DRIVETRAIN_SUBSYSTEM = TunerConstants.createDrivetrain();
+    public static final DrivetrainSubsystem DRIVETRAIN_SUBSYSTEM = TunerConstants.createDrivetrain();
     public static final IntakeSubsystem INTAKE_SUBSYSTEM = new IntakeSubsystem();
     public static final ConveyerSubsystem CONVEYER_SUBSYSTEM = new ConveyerSubsystem();
     public static  VisionSubsystem VISION_SUBSYSTEM;
@@ -77,6 +77,7 @@ public class Robot extends LoggedRobot {
         public static CreationClass CREATION_CLASS;
 
     public static final SwerveRequest.ApplyRobotSpeeds PATH_APPLY_ROBOT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
+    public static final SwerveRequest.ApplyRobotSpeeds DRIVE_STRAIGHT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
 
       public static final SwerveRequest.FieldCentric SWERVE_REQUEST_DRIVE = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
@@ -122,7 +123,7 @@ MechanismSim.updateTurretRotationTotal(0);
 
     NamedCommands.registerCommand("intake", new MoveIntakeConveyerMotorCommand() );
     NamedCommands.registerCommand("shootTurret", new TurretAuto());
-    NamedCommands.registerCommand("Auto Command", new autoCommand(new Pose2d(4,2,new Rotation2d())));
+    NamedCommands.registerCommand("Auto Command", new AutoCommand1());
       m_chooser.setDefaultOption("Auto 1", new PathPlannerAuto("auto1"));
 
   SmartDashboard.putData("Auto choices", m_chooser);
@@ -269,6 +270,8 @@ VISION_SUBSYSTEM.simUpdate();
     */
     
   }  
+
+
 
 
 

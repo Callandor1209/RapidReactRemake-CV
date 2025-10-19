@@ -33,17 +33,18 @@ public class VisionSubsystem extends SubsystemBase {
   SimCameraProperties cameraProperties = new SimCameraProperties();
   PhotonCamera frontCamera;
   PhotonCameraSim cameraSim;
-  double distanceX;
-  double distanceY;
+  double targetYaw;
 
   int i;
   int x = 0;
 
   double yaw = 0;
+  double area;
+  int tagId;
 
   TargetModel targetModel = new TargetModel(0.5, 0.25);
         Pose3d targetPose = new Pose3d(0,0,0, new Rotation3d());
-        VisionTargetSim[] visionTargetArray = {
+        public VisionTargetSim[] visionTargetArray = {
       new VisionTargetSim(targetPose, targetModel,1),
       new VisionTargetSim(targetPose, targetModel,2),
       new VisionTargetSim(targetPose, targetModel,3),
@@ -105,13 +106,15 @@ cameraSim.enableDrawWireframe(true);
     PhotonPipelineResult singularResult = pipelineResult.get(pipelineResult.size() - 1);
     if(singularResult.hasTargets()){
     PhotonTrackedTarget bestTarget = singularResult.getBestTarget();
-     distanceX = bestTarget.getBestCameraToTarget().getX();
-     distanceY = bestTarget.getBestCameraToTarget().getY();
-    System.out.println(distanceX + " x, y " + distanceY );
+     //distanceX = bestTarget.getBestCameraToTarget().getX();
+     targetYaw = bestTarget.getYaw();
+     //distanceY = bestTarget.getBestCameraToTarget().getY();
+ 
+      area = bestTarget.getArea();
+      tagId = bestTarget.getFiducialId();
     }
     else{
-      distanceX = 0;
-      distanceY = 0;
+      targetYaw = 0;
     }
   }
   
@@ -119,19 +122,17 @@ cameraSim.enableDrawWireframe(true);
 
   }
 
-  public double[] returnXandYTranslation(){
-    double[] doubleArray5 = {distanceX, distanceY};
-    return doubleArray5;
+  public int returnTagId(){
+    return tagId;
+  }
+
+  public double returnYaw(){
+    return targetYaw;
   }
 
   public void updateTargets(){
     i = Robot.CREATION_CLASS.creationArray.length -1;
-    if(yaw < 360){
-      yaw = yaw + 90;
-    }
-    else{
-      yaw = 0;
-    }
+   yaw = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getRotation().getRadians() + Math.toRadians(90);
     while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
       double[] xyz = Robot.CREATION_CLASS.creationArray[i].returnXandY();
 
@@ -140,5 +141,9 @@ cameraSim.enableDrawWireframe(true);
       i--;
       
     }
+  }
+
+  public double returnArea(){
+    return area;
   }
 }

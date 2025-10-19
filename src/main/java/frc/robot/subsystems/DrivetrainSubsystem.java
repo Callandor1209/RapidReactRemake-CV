@@ -48,7 +48,7 @@ import frc.robot.util.TunerConstants.TunerSwerveDrivetrain;
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
  * Subsystem so it can easily be used in command-based projects.
  */
-public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Subsystem {
+public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsystem {
     private static final double kSimLoopPeriod = 0.005; // 5 ms
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
@@ -171,7 +171,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      * @param drivetrainConstants Drivetrain-wide constants for the swerve drive
      * @param modules             Constants for each specific module
      */
-    public CommandSwerveDrivetrain(
+    public DrivetrainSubsystem(
         SwerveDrivetrainConstants drivetrainConstants,
         SwerveModuleConstants<?, ?, ?>... modules
     ) {
@@ -377,6 +377,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public void resetGyro(){
         resetRotation(new Rotation2d(0));
         AngularPositionHolder.setAngleToHoldToCurrentPosition();
+    }
+    public void driveStraight(){
+        setControl(
+            Robot.DRIVE_STRAIGHT_SPEEDS.withSpeeds(new ChassisSpeeds(0,-2,0))
+        );
     }
 
 
