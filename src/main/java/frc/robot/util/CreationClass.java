@@ -14,4 +14,16 @@ public class CreationClass {
          new GamePiece(11.00, 6.905,"fourR",true),
          new GamePiece(5.50, 1.40,"fiveR",true),
          new GamePiece(4.94, 2.88,"sixR",true)};
+    public Pose3d[] cargoArray;
+
+    public void logGamePieces(){{
+        for(int i = 0; i < creationArray.length / 2 -1; i++){
+            Pose3d[] cargoArrayBlue[i] = creationArray[i].returnPose();
+        }
+        for(int i = creationArray.length / 2 - 1; i < creationArray.length -1; i++){
+            Pose3d[] cargoArrayRed[i - creationArray.length / 2 -1] = creationArray[i];
+        }
+        Logger.recordOutput("Cargo Simulation/Cargo Array Blue", cargoArrayBlue);
+        Logger.recordOutput("Cargo Simulation/Cargo Array Red", cargoArrayRed);
+    }}
 }

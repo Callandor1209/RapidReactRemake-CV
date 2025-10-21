@@ -122,7 +122,7 @@ public class GamePiece extends SubsystemBase {
     if(!scored){
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(0,0,Robot.DRIVETRAIN_SUBSYSTEM.getRotation3d().getZ()));
     }
-    Logger.recordOutput("Game Piece /" + name2, gamePose);
+    //Logger.recordOutput("Game Piece /" + name2, gamePose);
   }
 
 
@@ -149,6 +149,10 @@ private boolean isPointInRobot(double poseX, double posey, double[][] corners) {
         i++;
     }
     return inside;
+}
+
+public Pose3d returnPose(){
+  return gamePose;
 }
 
 public double[] returnXandY(){

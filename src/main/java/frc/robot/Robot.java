@@ -154,6 +154,10 @@ MechanismSim.updateTurretRotationTotal(0);
         new Rotation3d(0, 0, pose2d.getRotation().getRadians()));
         Logger.recordOutput("Robot/Pose3d", pose3d);
 
+        if(Robot.isSimulation()){
+          CREATION_CLASS.logGamePieces();
+        }
+
 
     
   }
