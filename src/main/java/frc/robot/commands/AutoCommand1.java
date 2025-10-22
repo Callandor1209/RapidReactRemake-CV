@@ -104,10 +104,12 @@ timer.start();
   private boolean isBallAllianceColor(){
     if(Robot.isSimulation()){
       if(robotRed){
-        return visionSubsystem.returnTagId() > visionSubsystem.visionTargetArray.length / 2;
+        //return visionSubsystem.returnTagId() > visionSubsystem.visionTargetArray.length / 2 ;
+        return visionSubsystem.returnTagId() >= 100;
       }
       else{
-        return visionSubsystem.returnTagId() <= visionSubsystem.visionTargetArray.length / 2;
+        //return visionSubsystem.returnTagId() <= visionSubsystem.visionTargetArray.length / 2;
+        return visionSubsystem.returnTagId() < 100;
       }
     }
     return false;

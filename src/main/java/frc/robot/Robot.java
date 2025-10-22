@@ -21,6 +21,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -36,6 +37,7 @@ import frc.robot.commands.IntakeGoToPositionCommand;
 import frc.robot.commands.MoveIntakeConveyerMotorCommand;
 import frc.robot.commands.MoveObjectBackwardsInConveyer;
 import frc.robot.commands.PutBallInTurretCommand;
+import frc.robot.commands.RotateTurretTowardsCenter;
 import frc.robot.commands.SpinTurretClockwise;
 import frc.robot.commands.SpinTurretCounterClockwise;
 import frc.robot.commands.SpinTurretShootMotorCommand;
@@ -118,6 +120,7 @@ MechanismSim.updateTurretRotationTotal(0);
     configureBindings();
     if(Robot.isSimulation()){
     CREATION_CLASS = new CreationClass();
+    CREATION_CLASS.onStartup();
     VISION_SUBSYSTEM = new VisionSubsystem();
     }
 
@@ -176,6 +179,7 @@ MechanismSim.updateTurretRotationTotal(0);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
     }
+    TURRET_SUBSYSTEM.setDefaultCommand(new RotateTurretTowardsCenter());
   }
 
   /** This function is called periodically during autonomous. */
@@ -191,6 +195,8 @@ MechanismSim.updateTurretRotationTotal(0);
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+    Robot.DRIVETRAIN_SUBSYSTEM.noDefault = false;
+    TURRET_SUBSYSTEM.removeDefaultCommand();
   }
 
   /** This function is called periodically during operator control. */

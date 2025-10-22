@@ -12,7 +12,7 @@ public class TurretAuto extends Command {
   /** Creates a new shootPieceAuto. */
   public TurretAuto() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(Robot.CONVEYER_SUBSYSTEM, Robot.TURRET_SUBSYSTEM , Robot.INTAKE_SUBSYSTEM);
+    addRequirements(Robot.CONVEYER_SUBSYSTEM , Robot.INTAKE_SUBSYSTEM);
   }
 
   private boolean done1 = false;
@@ -38,7 +38,6 @@ public class TurretAuto extends Command {
     }
     Robot.CONVEYER_SUBSYSTEM.stopConveyer();
     Robot.INTAKE_SUBSYSTEM.stopIntakeConveyermoter();
-    Robot.TURRET_SUBSYSTEM.goToTargetPosition(Robot.TURRET_SUBSYSTEM.findCenterAngle());
 
     if(done1 && !Robot.CONVEYER_SUBSYSTEM.ballInturret()){
 

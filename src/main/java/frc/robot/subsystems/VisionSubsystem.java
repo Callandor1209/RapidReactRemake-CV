@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 
-
+import java.util.ArrayList;
 import java.util.List;
 
 import org.littletonrobotics.junction.Logger;
@@ -34,6 +34,10 @@ public class VisionSubsystem extends SubsystemBase {
   PhotonCamera frontCamera;
   PhotonCameraSim cameraSim;
   double targetYaw;
+  List<VisionTargetSim> targetSimlistRed = new ArrayList<>();
+  List<VisionTargetSim> targetSimlistBlue = new ArrayList<>();
+  VisionTargetSim[] visionTargetArrayBlue;
+  VisionTargetSim[] visionTargetArrayRed;
 
   int i;
   int x = 0;
@@ -44,20 +48,6 @@ public class VisionSubsystem extends SubsystemBase {
 
   TargetModel targetModel = new TargetModel(0.5, 0.25);
         Pose3d targetPose = new Pose3d(0,0,0, new Rotation3d());
-        public VisionTargetSim[] visionTargetArray = {
-      new VisionTargetSim(targetPose, targetModel,1),
-      new VisionTargetSim(targetPose, targetModel,2),
-      new VisionTargetSim(targetPose, targetModel,3),
-      new VisionTargetSim(targetPose, targetModel,4), 
-      new VisionTargetSim(targetPose, targetModel,5),
-      new VisionTargetSim(targetPose, targetModel,6),
-      new VisionTargetSim(targetPose, targetModel,7),
-      new VisionTargetSim(targetPose, targetModel,8),
-      new VisionTargetSim(targetPose, targetModel,9),
-      new VisionTargetSim(targetPose, targetModel,10), 
-      new VisionTargetSim(targetPose, targetModel,11),
-      new VisionTargetSim(targetPose, targetModel,12)
-      };
 
   public VisionSubsystem() {
     if(Robot.isSimulation()){
@@ -71,8 +61,17 @@ cameraSim.enableProcessedStream(true);
 
 cameraSim.enableDrawWireframe(true);
 
+for(int i = 0; i < Robot.CREATION_CLASS.blueCargoArray.length; i++){
+    targetSimlistBlue.add(new VisionTargetSim(targetPose, targetModel,i));
+}
+visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
+for(int i = 0; i < Robot.CREATION_CLASS.redCargoArray.length; i++){
+  targetSimlistRed.add(new VisionTargetSim(targetPose, targetModel,i + 100));
+}
+visionTargetArrayRed = targetSimlistRed.toArray(new VisionTargetSim[0]);
+visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
   }
-  }
+}
 
   public void simUpdate() {
     visionSim.update(Robot.DRIVETRAIN_SUBSYSTEM.getPose());
@@ -85,13 +84,17 @@ cameraSim.enableDrawWireframe(true);
       return;
     }
     // This method will be called once per scheduler run
-    int i2 = Robot.CREATION_CLASS.creationArray.length - 1;
+    int i2 = Robot.CREATION_CLASS.blueCargoArray.length -1 ;
     //once, when the robot first activates the vision targets are added to the sim
     while (i2 >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
-      visionSim.addVisionTargets(visionTargetArray[i2]);
+      visionSim.addVisionTargets(visionTargetArrayBlue[i2]);
       i2--;
     }
-    
+     i2 = Robot.CREATION_CLASS.redCargoArray.length - 1;
+    while (i2 >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
+      visionSim.addVisionTargets(visionTargetArrayRed[i2]);
+      i2--;
+    }
       if(x==5){
         updateTargets();
         x= 1;
@@ -106,10 +109,7 @@ cameraSim.enableDrawWireframe(true);
     PhotonPipelineResult singularResult = pipelineResult.get(pipelineResult.size() - 1);
     if(singularResult.hasTargets()){
     PhotonTrackedTarget bestTarget = singularResult.getBestTarget();
-     //distanceX = bestTarget.getBestCameraToTarget().getX();
      targetYaw = bestTarget.getYaw();
-     //distanceY = bestTarget.getBestCameraToTarget().getY();
- 
       area = bestTarget.getArea();
       tagId = bestTarget.getFiducialId();
     }
@@ -131,15 +131,23 @@ cameraSim.enableDrawWireframe(true);
   }
 
   public void updateTargets(){
-    i = Robot.CREATION_CLASS.creationArray.length -1;
+    i = Robot.CREATION_CLASS.blueCargoArray.length -1;
    yaw = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getRotation().getRadians() + Math.toRadians(90);
     while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
-      double[] xyz = Robot.CREATION_CLASS.creationArray[i].returnXandY();
+      double[] xyz = Robot.CREATION_CLASS.blueCargoArray[i].returnXandY();
 
       Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, yaw));
-      visionTargetArray[i].setPose(targetPose);
+      visionTargetArrayBlue[i].setPose(targetPose);
       i--;
       
+    }
+    i = Robot.CREATION_CLASS.redCargoArray.length - 1;
+    while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
+      double[] xyz = Robot.CREATION_CLASS.redCargoArray[i].returnXandY();
+
+      Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, yaw));
+      visionTargetArrayRed[i].setPose(targetPose);
+      i--;
     }
   }
 

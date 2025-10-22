@@ -35,7 +35,7 @@ public class GamePiece extends SubsystemBase {
    double shootPoseY;
    double targetX;
    double targetY;
-   private boolean isRed;
+   public boolean isRed;
    private boolean firing = false;
    private boolean inTurret = false;
    private boolean robotRed = false;
@@ -43,13 +43,14 @@ public class GamePiece extends SubsystemBase {
    private boolean scored = false;
    double robotX;
    double robotY;
+   int aprilTagNumber;
    InterpolatingDoubleTreeMap upwardsMomentumMap = new InterpolatingDoubleTreeMap();
    InterpolatingDoubleTreeMap conveyerMapZ = new InterpolatingDoubleTreeMap();
    InterpolatingDoubleTreeMap conveyerMapY = new InterpolatingDoubleTreeMap();
 
 
 
-  public GamePiece(double startPoseX,double startPoseY, String name, boolean isred) {
+  public GamePiece(double startPoseX,double startPoseY, String name, boolean isred, int aprilTagNumber2) {
     poseX = startPoseX;
     poseY = startPoseY;
     poseZ = 0.13;
@@ -57,6 +58,7 @@ public class GamePiece extends SubsystemBase {
     isRed = isred;
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d());
     addThingsToTreeMap();
+    aprilTagNumber = aprilTagNumber2;
 
   }
 
@@ -122,7 +124,6 @@ public class GamePiece extends SubsystemBase {
     if(!scored){
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(0,0,Robot.DRIVETRAIN_SUBSYSTEM.getRotation3d().getZ()));
     }
-    //Logger.recordOutput("Game Piece /" + name2, gamePose);
   }
 
 
@@ -298,6 +299,7 @@ public double[] returnXandY(){
         inTurret = false;
         inRobot = false;
         ConveyerSubsystem.turretSensor = false;
+        deleteSelf();
       }
     }
 
@@ -316,5 +318,14 @@ public double[] returnXandY(){
       conveyerMapY.put(0.9, 0.010);
       conveyerMapY.put(1.0,0.115);
 
+    }
+
+    public int returnAprilTagId(){
+      return aprilTagNumber;
+    }
+
+    public void deleteSelf(){
+       //Robot.CREATION_CLASS.removeInstance(aprilTagNumber);
+       scored = true;
     }
 }
