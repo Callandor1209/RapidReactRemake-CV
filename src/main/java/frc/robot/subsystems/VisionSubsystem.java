@@ -151,7 +151,16 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
     }
   }
 
+
+
   public double returnArea(){
     return area;
+  }
+
+  public void addBlueGamePiece(){
+
+  }
+  public void addRedGamePiece(){
+    
   }
 }

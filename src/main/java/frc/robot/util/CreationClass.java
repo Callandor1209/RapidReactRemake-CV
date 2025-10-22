@@ -28,6 +28,10 @@ public class CreationClass {
         
     public Pose3d[] cargoArrayRed;
     public Pose3d[] cargoArrayBlue;
+    public int numberBlue = 0;
+    public int numberRed = 100;
+    public int redGamePiecesOnField;
+    public int blueGamePiecesOnField
 
     public void logGamePieces(){{
         if(!DriverStation.isEnabled()){
@@ -41,6 +45,12 @@ public class CreationClass {
         }
         Logger.recordOutput("Cargo Simulation/Cargo Array Blue", cargoArrayBlue);
         Logger.recordOutput("Cargo Simulation/Cargo Array Red", cargoArrayRed);
+        if(blueGamePiecesOnField < 3 && DriverStation.alliance.get() == Alliance.blue){
+            createNewGamePiece(false);
+        }
+        if(redGamePiecesOnField < 3 && DriverStation.alliance.get() == Alliance.red){
+            createNewGamePiece(true);
+        }
     }}
 
     public void onStartup(){
@@ -48,9 +58,13 @@ public class CreationClass {
         List<Pose3d> arrayListRed = new ArrayList<>();
         for(int i = 0; i < blueCargoArray.length ; i++){
             arrayListBlue.add(new Pose3d());
+            numberBlue++;
+            gamePiecesOnField++;
        }
        for(int i = 0; i < redCargoArray.length ; i++){
         arrayListRed.add(new Pose3d());
+        numberRed++;
+        gamePiecesOnField++;
        }
        cargoArrayBlue = arrayListBlue.toArray(new Pose3d[0]);
        cargoArrayRed = arrayListRed.toArray(new Pose3d[0]);
@@ -72,4 +86,29 @@ public class CreationClass {
         redCargoArray[i] = new GamePiece(-100, -100, "scored", false, 1000);
     }
     }
+
+    public void createNewGamePiece(boolean isRed){
+        if(!isRed){
+        List<GamePiece> arrayListBlue2 = Array.asList(blueCargoArray);
+        arrayListBlue2.add(new GamePiece(1,1,"new",false,numberBlue));
+        numberBlue++;
+        blueCargoArray = arrayListBlue2.toArray();
+        List<Pose3d> arrayListBlue1 = Array.asList(cargoArrayBlue);
+        arrayListBlue1.add(new Pose3d());
+        cargoArrayBlue = arrayListBlue1.toArray();
+        Robot.VISION_SUBSYSTEM.addBlueGamePiece();
+        }
+        if(isRed){
+        List<GamePiece> arrayListRed2 = Array.asList(redCargoArray);
+        arrayListRed2.add(new GamePiece(1,1,"new",true,numberRed));
+        numberRed++;
+        blueCargoArray = arrayListRed2.toArray();
+        List<Pose3d> arrayListRed1 = Array.asList(cargoArrayRed);
+        arrayListRed1.add(new Pose3d());
+        cargoArrayRed = arrayListRed1.toArray();
+        Robot.VISION_SUBSYSTEM.addRedGamePiece();
+        }
+        gamePiecesOnField++;
+    }
+    
 }
