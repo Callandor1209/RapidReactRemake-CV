@@ -11,12 +11,12 @@ import edu.wpi.first.wpilibj.DriverStation;
 
 public class CreationClass {
         public GamePiece[] blueCargoArray = {
-            new GamePiece(8.25, 8.04, "one",false, 0),
-            new GamePiece(5.50, 6.90, "two",false,1),
-            new GamePiece(4.36, 4.15, "three",false,2),
-            new GamePiece(11.56, 5.42, "four",false,3),
-            new GamePiece(4.92, 5.42, "five",false,4),
-            new GamePiece(9.52, 7.45, "six",false,5),
+            new GamePiece(8.25, 8.04,0.13, "one",false, 0),
+            new GamePiece(5.50, 6.90,0.13, "two",false,1),
+            new GamePiece(4.36, 4.15, 0.13, "three",false,2),
+            new GamePiece(11.56, 5.42, 0.13,"four",false,3),
+            new GamePiece(4.92, 5.42, 0.13, "five",false,4),
+            new GamePiece(9.52, 7.45, 0.13, "six",false,5),
         };
         public GamePiece[] redCargoArray = {
             new GamePiece(8.25, 0.26,"oneR",true,100),
@@ -31,7 +31,7 @@ public class CreationClass {
     public int numberBlue = 0;
     public int numberRed = 100;
     public int redGamePiecesOnField;
-    public int blueGamePiecesOnField
+    public int blueGamePiecesOnField;
 
     public void logGamePieces(){{
         if(!DriverStation.isEnabled()){

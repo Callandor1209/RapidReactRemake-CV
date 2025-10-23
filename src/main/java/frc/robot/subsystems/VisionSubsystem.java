@@ -157,10 +157,12 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
     return area;
   }
 
-  public void addBlueGamePiece(){
-
+  public void addBlueGamePiece(number){
+           targetSimlistBlue.add(new VisionTargetSim(targetPose,targetModel,number));
+       visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim);
   }
-  public void addRedGamePiece(){
-    
+  public void addRedGamePiece(number){
+           targetSimlistRed.add(new VisionTargetSim(targetPose,targetModel,number));
+       visionTargetArrayRed = targetSimlistRed.toArray(new VisionTargetSim);
   }
 }

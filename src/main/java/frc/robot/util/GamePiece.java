@@ -50,10 +50,10 @@ public class GamePiece extends SubsystemBase {
 
 
 
-  public GamePiece(double startPoseX,double startPoseY, String name, boolean isred, int aprilTagNumber2) {
+  public GamePiece(double startPoseX,double startPoseY, double startPoseZ String name, boolean isred, int aprilTagNumber2) {
     poseX = startPoseX;
     poseY = startPoseY;
-    poseZ = 0.13;
+    poseZ = startPoseZ;
     name2 = name;
     isRed = isred;
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d());
