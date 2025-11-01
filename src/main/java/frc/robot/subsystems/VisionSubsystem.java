@@ -116,7 +116,6 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
     targetYaw = 0;
     area = 0;
   }
-  System.out.println(tagId);
   
 
 

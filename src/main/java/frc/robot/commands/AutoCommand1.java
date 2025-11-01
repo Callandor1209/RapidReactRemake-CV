@@ -31,6 +31,7 @@ public class AutoCommand1 extends Command {
   private Timer timer;
   double x = 0;
   double y = 0;
+  Command followPath;
 
   public AutoCommand1() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -56,36 +57,40 @@ timer.start();
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    x = Math.random() * 10;
+    x = Math.random() * 20;
     y = Math.random() * 10;
     if(y > 8 ){
      y = 2;
     }
-    if(x== 16){
+    if(x >  16){
      x = 2;
     }
     if(timer.get() > 6){
+      Robot.ARRAY_CLASS.reverseValue = Robot.ARRAY_CLASS.reverseValue * -1;
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses( 
       new Pose2d(driveTrainSubsystem.getPose().getX(),driveTrainSubsystem.getPose().getY(), new Rotation2d()),
       new Pose2d(x,y,new Rotation2d())
     );
     PathConstraints pathConstraints = new PathConstraints(3, 3, 540, 720); //this is just pulled from pathplanner defaults for now
     PathPlannerPath path = new PathPlannerPath(waypoints, pathConstraints, null, new GoalEndState(0,new Rotation2d()));
-    Command followpath = AutoBuilder.followPath(path);
-     followpath.schedule();
+     followPath = AutoBuilder.followPath(path);
+     followPath.schedule();
 
      timer.restart();
     }
-    if(Robot.VISION_SUBSYSTEM.returnYaw() > 10 && isBallAllianceColor() && Robot.VISION_SUBSYSTEM.returnArea() > 0.25 ){
+    if(Robot.VISION_SUBSYSTEM.returnYaw() > 10 * Robot.ARRAY_CLASS.reverseValue&& Robot.VISION_SUBSYSTEM.returnYaw() < 50 + 50 * Robot.ARRAY_CLASS.reverseValue && isBallAllianceColor() && Robot.VISION_SUBSYSTEM.returnArea() >= 0.25){
       driveTrainSubsystem.drive(0, 0, -1 * Robot.ARRAY_CLASS.reverseValue);
+      if(followPath != null){
+      followPath.cancel();
+      }
     }
     else{
       driveTrainSubsystem.drive(0, 0, 1 * Robot.ARRAY_CLASS.reverseValue);
     }
+    System.out.println("In Auto Command 1");
       
 
-      System.out.println("In Auto Command 1");
-      System.out.println(visionSubsystem.returnArea() + " Area");
+
   }
 
   // Called once the command ends or is interrupted.
@@ -93,7 +98,7 @@ timer.start();
   public void end(boolean interrupted) {
     driveTrainSubsystem.drive(0, 0, 0);
     new AutoCommand2().schedule();
-    Robot.ARRAY_CLASS.reverseValue = Robot.ARRAY_CLASS.reverseValue * -1;
+
   }
 
   // Returns true when the command should end.

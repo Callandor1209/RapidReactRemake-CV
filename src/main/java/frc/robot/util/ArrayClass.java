@@ -39,7 +39,7 @@ public class ArrayClass {
     public double y = 0;
     public int reverseValue = 1;
 
-    public void logGamePieces(){{
+    public void logGamePieces(){
         if(!DriverStation.isEnabled()){
             return;
         }
@@ -57,7 +57,8 @@ public class ArrayClass {
         if(redGamePiecesOnField < 3 && DriverStation.getAlliance().get() == Alliance.Red){
             createNewGamePiece(true);
         }
-    }}
+        System.out.println(reverseValue);
+    }
 
     public void onStartup(){
         List<Pose3d> arrayListBlue = new ArrayList<>();

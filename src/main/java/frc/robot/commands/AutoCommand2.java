@@ -56,9 +56,6 @@ public class AutoCommand2 extends Command {
       driveTrainSubsystem.drive(0, 0, 0);
     }
 System.out.println("In Auto Command 2");
-System.out.println(visionSubsystem.returnArea() + " area");
-System.out.println(timer.get() + " timer");
-System.out.println(done + " done");
   }
 
   // Called once the command ends or is interrupted.
