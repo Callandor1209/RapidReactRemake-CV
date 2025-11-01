@@ -12,7 +12,7 @@ public class TurretAuto extends Command {
   /** Creates a new shootPieceAuto. */
   public TurretAuto() {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(Robot.CONVEYER_SUBSYSTEM , Robot.INTAKE_SUBSYSTEM);
+    addRequirements(Robot.INTAKE_SUBSYSTEM);
   }
 
   private boolean done1 = false;
@@ -28,8 +28,8 @@ public class TurretAuto extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    Robot.INTAKE_SUBSYSTEM.startIntakeConveyer();
     if(!Robot.CONVEYER_SUBSYSTEM.ballInturret()){
-      Robot.CONVEYER_SUBSYSTEM.moveConveyer();
       return;
     }
     if(Robot.TURRET_SUBSYSTEM.getSpeedM1() == 0){
@@ -37,7 +37,6 @@ public class TurretAuto extends Command {
       done1 = true;
     }
     Robot.CONVEYER_SUBSYSTEM.stopConveyer();
-    Robot.INTAKE_SUBSYSTEM.stopIntakeConveyermoter();
 
     if(done1 && !Robot.CONVEYER_SUBSYSTEM.ballInturret()){
 

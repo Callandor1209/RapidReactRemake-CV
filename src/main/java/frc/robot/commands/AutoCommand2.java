@@ -33,19 +33,16 @@ public class AutoCommand2 extends Command {
   @Override
   public void initialize() {
     timer = new Timer();
+    timer.reset();
+    driveTrainSubsystem.noDefault = true;
+    done = false;
 
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(Math.abs(visionSubsystem.returnYaw()) > 10){
-      done2 = true;
-    }
-    if(done && timer.get() > 2){
-      done2 = true;
-    }
-    if(visionSubsystem.returnArea() > 10 &&  !done){
+    if(visionSubsystem.returnArea() > 11 &&  !done){
       done = true;
       timer.start();
       new TurretAuto().schedule();
@@ -55,14 +52,18 @@ public class AutoCommand2 extends Command {
     if(Robot.DRIVETRAIN_SUBSYSTEM.getState().Speeds.vxMetersPerSecond == 0 && !done){
     driveTrainSubsystem.driveStraight();
     }
-
-              
+    if(done){
+      driveTrainSubsystem.drive(0, 0, 0);
+    }
+System.out.println("In Auto Command 2");
+System.out.println(visionSubsystem.returnArea() + " area");
+System.out.println(timer.get() + " timer");
+System.out.println(done + " done");
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    //new autoCommand(pose).schedule();
     driveTrainSubsystem.noDefault = false;
     new AutoCommand1().schedule();
     driveTrainSubsystem.drive(0, 0, 0);
@@ -71,7 +72,8 @@ public class AutoCommand2 extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done2;
+    
+    return timer.get() > 2 || Math.abs(visionSubsystem.returnYaw()) > 11 || visionSubsystem.returnArea() < 0.25;
   }
 
 

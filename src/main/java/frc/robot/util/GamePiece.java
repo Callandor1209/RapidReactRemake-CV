@@ -50,7 +50,7 @@ public class GamePiece extends SubsystemBase {
 
 
 
-  public GamePiece(double startPoseX,double startPoseY, double startPoseZ String name, boolean isred, int aprilTagNumber2) {
+  public GamePiece(double startPoseX,double startPoseY, double startPoseZ, String name, boolean isred, int aprilTagNumber2) {
     poseX = startPoseX;
     poseY = startPoseY;
     poseZ = startPoseZ;
@@ -97,10 +97,11 @@ public class GamePiece extends SubsystemBase {
     if(inRobot && !firing){
       moveWithRobot();
     }
-    //if the game piece is in turret and the shooter motor is runninhg
+    //if the game piece is in turret and the shooter motor is running
     if(Robot.TURRET_SUBSYSTEM.getTurretShootMotorSpeed() > 0.01 && !firing && inTurret){
       firing = true;
       upwardsMomentum = 0.03;
+      ConveyerSubsystem.turretSensor = false;
     }
     //if the game piece has been fired then move it towards the center 
     if(firing){
@@ -123,6 +124,10 @@ public class GamePiece extends SubsystemBase {
     //update the pose of the game piece
     if(!scored){
     gamePose = new Pose3d(poseX, poseY, poseZ, new Rotation3d(0,0,Robot.DRIVETRAIN_SUBSYSTEM.getRotation3d().getZ()));
+    }
+    else{
+      poseX = 100;
+      poseY = 100;
     }
   }
 
@@ -290,15 +295,10 @@ public double[] returnXandY(){
       if (shootPoseY < -0.03){
         poseY = poseY + 0.05;
       }
-      if(Math.abs(poseX) - 8.25 < 0.03  && Math.abs(poseX)- 8.25 > 0 && Math.abs(poseY) - 4.15 < 0.1&&  Math.abs(poseY)- 4.15 > 0  && poseZ  - 2.8 < 0.3){
-        upwardsMomentum = 0;
-        scored = true;
-        }
       if(shootPoseY > -0.03 && shootPoseY < 0.03 && shootPoseX > -0.03 && shootPoseX < 0.03 ){
         firing = false;
         inTurret = false;
         inRobot = false;
-        ConveyerSubsystem.turretSensor = false;
         deleteSelf();
       }
     }
@@ -325,8 +325,15 @@ public double[] returnXandY(){
     }
 
     public void deleteSelf(){
+
        //Robot.CREATION_CLASS.removeInstance(aprilTagNumber);
        scored = true;
+       if(isRed){
+       Robot.ARRAY_CLASS.redGamePiecesOnField --;
+       }
+       else{
+        Robot.ARRAY_CLASS.blueGamePiecesOnField--;
+       }
     }
 
     

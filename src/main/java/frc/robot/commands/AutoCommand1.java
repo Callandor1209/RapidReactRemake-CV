@@ -25,13 +25,13 @@ import frc.robot.subsystems.VisionSubsystem;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class AutoCommand1 extends Command {
   /** Creates a new autoCommand. */
-  boolean done = false;
   boolean robotRed;
   VisionSubsystem visionSubsystem = Robot.VISION_SUBSYSTEM;
   DrivetrainSubsystem driveTrainSubsystem = Robot.DRIVETRAIN_SUBSYSTEM;
   private Timer timer;
   double x = 0;
   double y = 0;
+
   public AutoCommand1() {
     // Use addRequirements() here to declare subsystem dependencies.
 
@@ -56,36 +56,36 @@ timer.start();
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(timer.get() > 5 && !done){
+    x = Math.random() * 10;
+    y = Math.random() * 10;
+    if(y > 8 ){
+     y = 2;
+    }
+    if(x== 16){
+     x = 2;
+    }
+    if(timer.get() > 6){
       List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses( 
       new Pose2d(driveTrainSubsystem.getPose().getX(),driveTrainSubsystem.getPose().getY(), new Rotation2d()),
-      new Pose2d(x+2,y+2,new Rotation2d())
+      new Pose2d(x,y,new Rotation2d())
     );
     PathConstraints pathConstraints = new PathConstraints(3, 3, 540, 720); //this is just pulled from pathplanner defaults for now
     PathPlannerPath path = new PathPlannerPath(waypoints, pathConstraints, null, new GoalEndState(0,new Rotation2d()));
     Command followpath = AutoBuilder.followPath(path);
      followpath.schedule();
-     x = x +2;
-     y = y + 2;
-     if(y == 8){
-      y = 0;
-     }
-     if(x== 16){
-      x = 0;
-     }
+
      timer.restart();
     }
-    if(Robot.VISION_SUBSYSTEM.returnYaw() > 10 && isBallAllianceColor() ){
-      driveTrainSubsystem.drive(0, 0, -1);
+    if(Robot.VISION_SUBSYSTEM.returnYaw() > 10 && isBallAllianceColor() && Robot.VISION_SUBSYSTEM.returnArea() > 0.25 ){
+      driveTrainSubsystem.drive(0, 0, -1 * Robot.ARRAY_CLASS.reverseValue);
     }
     else{
-      driveTrainSubsystem.drive(0, 0, 1);
+      driveTrainSubsystem.drive(0, 0, 1 * Robot.ARRAY_CLASS.reverseValue);
     }
       
-    if(Math.abs(Robot.VISION_SUBSYSTEM.returnYaw()) < 10 && Robot.VISION_SUBSYSTEM.returnYaw() != 0 && isBallAllianceColor() ){
-        done = true;
-      }
-      System.out.println(timer.get());
+
+      System.out.println("In Auto Command 1");
+      System.out.println(visionSubsystem.returnArea() + " Area");
   }
 
   // Called once the command ends or is interrupted.
@@ -93,22 +93,22 @@ timer.start();
   public void end(boolean interrupted) {
     driveTrainSubsystem.drive(0, 0, 0);
     new AutoCommand2().schedule();
+    Robot.ARRAY_CLASS.reverseValue = Robot.ARRAY_CLASS.reverseValue * -1;
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return done;
+    return Math.abs(Robot.VISION_SUBSYSTEM.returnYaw()) < 10 && Robot.VISION_SUBSYSTEM.returnYaw() != 0 && isBallAllianceColor();
   }
 
   private boolean isBallAllianceColor(){
     if(Robot.isSimulation()){
       if(robotRed){
-        //return visionSubsystem.returnTagId() > visionSubsystem.visionTargetArray.length / 2 ;
         return visionSubsystem.returnTagId() >= 100;
       }
       else{
-        //return visionSubsystem.returnTagId() <= visionSubsystem.visionTargetArray.length / 2;
+
         return visionSubsystem.returnTagId() < 100;
       }
     }

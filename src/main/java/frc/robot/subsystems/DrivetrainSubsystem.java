@@ -380,7 +380,12 @@ public class DrivetrainSubsystem extends TunerSwerveDrivetrain implements Subsys
     }
     public void driveStraight(){
         setControl(
-            Robot.DRIVE_STRAIGHT_SPEEDS.withSpeeds(new ChassisSpeeds(0,-2,0))
+            Robot.DRIVE_STRAIGHT_SPEEDS.withSpeeds(new ChassisSpeeds(0,-2.5,0))
+        );
+    }
+    public void driveInDirection(ChassisSpeeds speeds){
+        setControl(
+            Robot.DRIVE_STRAIGHT_SPEEDS.withSpeeds(speeds)
         );
     }
 

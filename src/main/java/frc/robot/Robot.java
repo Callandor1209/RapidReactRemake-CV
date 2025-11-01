@@ -43,16 +43,18 @@ import frc.robot.commands.SpinTurretCounterClockwise;
 import frc.robot.commands.SpinTurretShootMotorCommand;
 import frc.robot.commands.TurretAuto;
 import frc.robot.commands.AutoCommand1;
+import frc.robot.commands.ConveyerIndexCommand;
 import frc.robot.subsystems.DrivetrainSubsystem;
 import frc.robot.subsystems.ConveyerSubsystem;
 import frc.robot.subsystems.DriveTrainSimulationSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.TurretSubsystem;
 import frc.robot.subsystems.VisionSubsystem;
-import frc.robot.util.CreationClass;
+import frc.robot.util.ArrayClass;
 import frc.robot.util.GamePiece;
 import frc.robot.util.MechanismSim;
 import frc.robot.util.TunerConstants;
+import frc.robot.util.Wall;
 
 /**
  * The methods in this class are called automatically corresponding to each mode, as described in
@@ -76,7 +78,7 @@ public class Robot extends LoggedRobot {
 
     public final static CommandXboxController M_XBOX_CONTROLLER = new CommandXboxController(OperatorConstants.kDriverControllerPort );
         private final SendableChooser<Command> m_chooser = new SendableChooser<>();
-        public static CreationClass CREATION_CLASS;
+        public static ArrayClass ARRAY_CLASS;
 
     public static final SwerveRequest.ApplyRobotSpeeds PATH_APPLY_ROBOT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
     public static final SwerveRequest.ApplyRobotSpeeds DRIVE_STRAIGHT_SPEEDS = new SwerveRequest.ApplyRobotSpeeds();
@@ -119,9 +121,11 @@ MechanismSim.updateTurretRotationTotal(0);
 
     configureBindings();
     if(Robot.isSimulation()){
-    CREATION_CLASS = new CreationClass();
-    CREATION_CLASS.onStartup();
+    ARRAY_CLASS = new ArrayClass();
+    ARRAY_CLASS.onStartup();
     VISION_SUBSYSTEM = new VisionSubsystem();
+
+
     }
 
     NamedCommands.registerCommand("intake", new MoveIntakeConveyerMotorCommand() );
@@ -158,7 +162,7 @@ MechanismSim.updateTurretRotationTotal(0);
         Logger.recordOutput("Robot/Pose3d", pose3d);
 
         if(Robot.isSimulation()){
-          CREATION_CLASS.logGamePieces();
+          ARRAY_CLASS.logGamePieces();
         }
 
 
@@ -180,6 +184,7 @@ MechanismSim.updateTurretRotationTotal(0);
       m_autonomousCommand.schedule();
     }
     TURRET_SUBSYSTEM.setDefaultCommand(new RotateTurretTowardsCenter());
+    CONVEYER_SUBSYSTEM.setDefaultCommand(new PutBallInTurretCommand());
   }
 
   /** This function is called periodically during autonomous. */

@@ -61,11 +61,10 @@ cameraSim.enableProcessedStream(true);
 
 cameraSim.enableDrawWireframe(true);
 
-for(int i = 0; i < Robot.CREATION_CLASS.blueCargoArray.length; i++){
+for(int i = 0; i < Robot.ARRAY_CLASS.blueCargoArray.length; i++){
     targetSimlistBlue.add(new VisionTargetSim(targetPose, targetModel,i));
 }
-visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
-for(int i = 0; i < Robot.CREATION_CLASS.redCargoArray.length; i++){
+for(int i = 0; i < Robot.ARRAY_CLASS.redCargoArray.length; i++){
   targetSimlistRed.add(new VisionTargetSim(targetPose, targetModel,i + 100));
 }
 visionTargetArrayRed = targetSimlistRed.toArray(new VisionTargetSim[0]);
@@ -84,17 +83,14 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
       return;
     }
     // This method will be called once per scheduler run
-    int i2 = Robot.CREATION_CLASS.blueCargoArray.length -1 ;
+    int i2 = Robot.ARRAY_CLASS.blueCargoArray.length -1 ;
     //once, when the robot first activates the vision targets are added to the sim
     while (i2 >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
       visionSim.addVisionTargets(visionTargetArrayBlue[i2]);
-      i2--;
-    }
-     i2 = Robot.CREATION_CLASS.redCargoArray.length - 1;
-    while (i2 >= 0 && DriverStation.isEnabled() && x == 0 && Robot.isSimulation()) {
       visionSim.addVisionTargets(visionTargetArrayRed[i2]);
       i2--;
     }
+
       if(x==5){
         updateTargets();
         x= 1;
@@ -107,16 +103,20 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
     List<PhotonPipelineResult>  pipelineResult = frontCamera.getAllUnreadResults();
     if(!pipelineResult.isEmpty()){
     PhotonPipelineResult singularResult = pipelineResult.get(pipelineResult.size() - 1);
+    area = 0;
     if(singularResult.hasTargets()){
     PhotonTrackedTarget bestTarget = singularResult.getBestTarget();
      targetYaw = bestTarget.getYaw();
       area = bestTarget.getArea();
       tagId = bestTarget.getFiducialId();
     }
-    else{
-      targetYaw = 0;
-    }
+
   }
+  else{
+    targetYaw = 0;
+    area = 0;
+  }
+  System.out.println(tagId);
   
 
 
@@ -131,23 +131,20 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
   }
 
   public void updateTargets(){
-    i = Robot.CREATION_CLASS.blueCargoArray.length -1;
-   yaw = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getRotation().getRadians() + Math.toRadians(90);
-    while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
-      double[] xyz = Robot.CREATION_CLASS.blueCargoArray[i].returnXandY();
+       yaw = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getRotation().getRadians() + Math.toRadians(90);
+
+    for (int i= 0; Robot.ARRAY_CLASS.blueCargoArray.length -1 >= i && DriverStation.isEnabled() && x > 0 && Robot.isSimulation(); i++) {
+      double[] xyz = Robot.ARRAY_CLASS.blueCargoArray[i].returnXandY();
 
       Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, yaw));
       visionTargetArrayBlue[i].setPose(targetPose);
-      i--;
       
     }
-    i = Robot.CREATION_CLASS.redCargoArray.length - 1;
-    while (i >= 0 && DriverStation.isEnabled() && x > 0 && Robot.isSimulation()) {
-      double[] xyz = Robot.CREATION_CLASS.redCargoArray[i].returnXandY();
+    for (int i= 0; Robot.ARRAY_CLASS.redCargoArray.length -1 >= i && DriverStation.isEnabled() && x > 0 && Robot.isSimulation(); i++) {
+      double[] xyz = Robot.ARRAY_CLASS.redCargoArray[i].returnXandY();
 
       Pose3d targetPose = new Pose3d(xyz[0], xyz[1], xyz[2], new Rotation3d(0, 0, yaw));
       visionTargetArrayRed[i].setPose(targetPose);
-      i--;
     }
   }
 
@@ -157,12 +154,15 @@ visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
     return area;
   }
 
-  public void addBlueGamePiece(number){
+  public void addBlueGamePiece(int number){
            targetSimlistBlue.add(new VisionTargetSim(targetPose,targetModel,number));
-       visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim);
+       visionTargetArrayBlue = targetSimlistBlue.toArray(new VisionTargetSim[0]);
+       visionSim.addVisionTargets(visionTargetArrayBlue[number]);
+       System.out.println("Adding Vision Target");
   }
-  public void addRedGamePiece(number){
+  public void addRedGamePiece(int number){
            targetSimlistRed.add(new VisionTargetSim(targetPose,targetModel,number));
-       visionTargetArrayRed = targetSimlistRed.toArray(new VisionTargetSim);
+       visionTargetArrayRed = targetSimlistRed.toArray(new VisionTargetSim[0]);
+       visionSim.addVisionTargets(visionTargetArrayRed[number - 100]);
   }
 }
