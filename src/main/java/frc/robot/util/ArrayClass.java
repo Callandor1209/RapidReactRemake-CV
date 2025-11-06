@@ -57,7 +57,6 @@ public class ArrayClass {
         if(redGamePiecesOnField < 3 && DriverStation.getAlliance().get() == Alliance.Red){
             createNewGamePiece(true);
         }
-        System.out.println(reverseValue);
     }
 
     public void onStartup(){

@@ -4,6 +4,8 @@
 
 package frc.robot.Constants;
 
+import edu.wpi.first.wpilibj.DriverStation;
+
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants. This class should not be used for any other purpose. All constants should be declared
@@ -28,6 +30,15 @@ public final class Constants {
   public static final int LOWER_SENSOR_CAN_ID = 100;
   public static final int UPPER_SENSOR_CAN_ID = 101;
   public static final int TURRET_SENSOR_CAN_ID = 102;
+
+
+  public static final double FAR_EDGE_Y = 7.6;
+  public static final double FAR_EDGE_X = 16.8;
+  public static final double CLOSE_EDGE_Y = 0.7;
+  public static final double CLOSE_EDGE_X = 0.3;
+  public static final double CENTER_X = 8.25;
+  public static final double CENTER_Y = 4.15;
+
 
 
 }

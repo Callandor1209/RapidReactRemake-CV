@@ -22,6 +22,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -73,6 +74,7 @@ public class Robot extends LoggedRobot {
     public static  VisionSubsystem VISION_SUBSYSTEM;
     public static final DriveTrainSimulationSubsystem DRIVE_TRAIN_SIMULATION_SUBSYSTEM = new DriveTrainSimulationSubsystem();
 
+
       public final static CommandPS5Controller m_driverController =
       new CommandPS5Controller(OperatorConstants.kDriverControllerPort);
 
@@ -86,6 +88,8 @@ public class Robot extends LoggedRobot {
       public static final SwerveRequest.FieldCentric SWERVE_REQUEST_DRIVE = new SwerveRequest.FieldCentric()
       .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
       public Pose3d pose3d;
+
+      public static boolean robotRed = false;
 
       
 
@@ -185,6 +189,11 @@ MechanismSim.updateTurretRotationTotal(0);
     }
     TURRET_SUBSYSTEM.setDefaultCommand(new RotateTurretTowardsCenter());
     CONVEYER_SUBSYSTEM.setDefaultCommand(new PutBallInTurretCommand());
+    if(DriverStation.getAlliance().get() == Alliance.Red){
+      robotRed = true;
+      return;
+    }
+    robotRed = false;
   }
 
   /** This function is called periodically during autonomous. */
@@ -202,6 +211,12 @@ MechanismSim.updateTurretRotationTotal(0);
     }
     Robot.DRIVETRAIN_SUBSYSTEM.noDefault = false;
     TURRET_SUBSYSTEM.removeDefaultCommand();
+
+    if(DriverStation.getAlliance().get() == Alliance.Red){
+      robotRed = true;
+      return;
+    }
+    robotRed = false;
   }
 
   /** This function is called periodically during operator control. */
