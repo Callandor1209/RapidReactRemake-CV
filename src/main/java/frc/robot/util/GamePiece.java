@@ -76,7 +76,7 @@ public class GamePiece extends SubsystemBase {
     robotX = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getX();
      robotY = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getY();
     //if the game pieces coordinates are in the robot but it has not been picked up by the robot then move it
-    if(gamePieceInRobot() && !inRobot){
+    if(gamePieceInRobot() && !inRobot && !firing){
       runIntoGamePiece();
     } 
     else{
@@ -85,7 +85,7 @@ public class GamePiece extends SubsystemBase {
     }
     //GRAVITY!!! 
     if(isNotTouchingRobot()){
-      upwardsMomentum = upwardsMomentum - 0.002;
+      upwardsMomentum = upwardsMomentum  - 0.01;
       if(poseZ == 0.13){
         upwardsMomentum = upwardsMomentum * -0.2;
         launchSpeedX = launchSpeedX * 0.5;
@@ -113,14 +113,16 @@ public class GamePiece extends SubsystemBase {
     }
     //if the game piece has been fired then move it towards the center 
     if(firing){
-      moveTowardsCenter(); 
+      moveTowardsCenter2(); 
     }
     //if at edge, go the other way
     if(robotOverYEdge()){
       sidewaysMomentum = sidewaysMomentum * -0.5;
+      launchSpeedY = launchSpeedY * -0.5;
     }
     if( poseX < 0.7 || poseX > 15.9){
       forwardMomentum = forwardMomentum * -0.5;
+      launchSpeedX = launchSpeedX * -0.5;
     }
     poseX = poseX + forwardMomentum;
     poseY = poseY + sidewaysMomentum;
@@ -161,12 +163,16 @@ private boolean isPointInRobot(double poseX, double posey, double[][] corners) {
     return inside;
 }
     public void runIntoGamePiece(){
-      forwardMomentum = DrivetrainDefaultCommand.x2y2return()[0] * -0.1;
-      sidewaysMomentum = DrivetrainDefaultCommand.x2y2return()[1] * -0.1;
+      double multiplier = 1;
+      if(!Robot.robotRed){
+        multiplier = -1;
+      }
+      forwardMomentum = DrivetrainDefaultCommand.x2y2return()[0] * -0.1 * multiplier;
+      sidewaysMomentum = DrivetrainDefaultCommand.x2y2return()[1] * -0.1 * multiplier;
     }
 
     public void slowGamePieceMovement(){
-      sidewaysMomentum = closerToZero(sidewaysMomentum, forwardMomentum, 0.05);
+      sidewaysMomentum = closerToZero(sidewaysMomentum, sidewaysMomentum, 0.05);
       forwardMomentum = closerToZero(forwardMomentum, forwardMomentum, 0.05);
       if(sidewaysMomentum > 0 && sidewaysMomentum < 0.05){
         sidewaysMomentum = 0;
@@ -245,22 +251,30 @@ private boolean isPointInRobot(double poseX, double posey, double[][] corners) {
 
     public void moveTowardsCenter2(){
       if(isNew){
+        firing = true;
         //should only be called on the first run of the code
-        launchAngle = Math.toRadians(Robot.TURRET_SUBSYSTEM.getPosition() * 36);
-        double speed =  2 * Robot.TURRET_SUBSYSTEM.getTurretShootMotorSpeed();
+        double turretPosition = Robot.TURRET_SUBSYSTEM.getPosition();
+        if(turretPosition < 0){
+          turretPosition = turretPosition + 10;
+        }
+        double robotPosition = Robot.DRIVETRAIN_SUBSYSTEM.getPose().getRotation().getDegrees();
+
+        launchAngle = Math.toRadians(turretPosition * 36 - 90 + robotPosition);
+
+        double speed =  1 * Robot.TURRET_SUBSYSTEM.getTurretShootMotorSpeed();
         launchSpeedX = speed * Math.cos(launchAngle);
         launchSpeedY = speed * Math.sin(launchAngle);
         isNew = false;
-        upwardsMomentum = speed;
+        upwardsMomentum = speed * 0.5;
         return;
       }
       poseX = poseX + launchSpeedX;
       poseY = poseY + launchSpeedY;
-      launchSpeedX = launchSpeedX * 0.90;
-      launchSpeedY = launchSpeedY * 0.90;
-      upwardsMomentum = upwardsMomentum -0.05;
+      launchSpeedX = launchSpeedX * 0.95;
+      launchSpeedY = launchSpeedY * 0.95;
 
-      if(launchSpeedX <= 0){
+
+      if(launchSpeedX <= 0.02 && launchSpeedY <=0.02){
         isNew = true;
         firing = false;
         inTurret = false;
