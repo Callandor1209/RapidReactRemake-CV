@@ -61,9 +61,11 @@ System.out.println("In Auto Command 2");
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    if(!interrupted){
     driveTrainSubsystem.noDefault = false;
     new AutoCommand1().schedule();
     driveTrainSubsystem.drive(0, 0, 0);
+    }
   }
 
   // Returns true when the command should end.
